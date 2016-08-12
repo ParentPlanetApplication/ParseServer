@@ -42,8 +42,15 @@ namespace :deploy do
 
   desc 'Restart application'
   task :restart do
-    invoke 'pm2:restart'
+    # invoke 'pm2:restart'
+  end
+
+  task :install_lib do
+    on roles(:app) do
+      execute "npm install"
+    end
   end
 
   after :publishing, :restart
+  after :restart, :install_lib
 end
