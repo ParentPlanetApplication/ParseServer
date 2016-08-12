@@ -1,8 +1,8 @@
-# parse-server-example
+# parse-server
 
-Example project using the [parse-server](https://github.com/ParsePlatform/parse-server) module on Express.
+project using the [parse-server](https://github.com/ParsePlatform/parse-server) module on Express.
 
-Read the full Parse Server guide here: https://github.com/ParsePlatform/parse-server/wiki/Parse-Server-Guide
+Read the full Parse Server guide here: https://github.com/ParentPlanetApplication/ParseServer/wiki/ParseServerGuide
 
 ### For Local Development
 
@@ -56,7 +56,7 @@ A detailed tutorial is available here:
 
 ### Getting Started With Google App Engine
 
-1. Clone the repo and change directory to it 
+1. Clone the repo and change directory to it
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. [Enable billing](https://console.cloud.google.com/project/_/settings) for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
@@ -98,7 +98,7 @@ curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"score":1337,"playerName":"Sean Plott","cheatMode":false}' \
   http://localhost:1337/parse/classes/GameScore
-  
+
 curl -X POST \
   -H "X-Parse-Application-Id: myAppId" \
   -H "Content-Type: application/json" \
