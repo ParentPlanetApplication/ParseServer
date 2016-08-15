@@ -25,7 +25,20 @@ p.then( config => {
 		serverURL: serverURL,
 		liveQuery: {
 			classNames: [ "Posts", "Comments" ] // List of classes to support for query subscriptions
-		}
+		},
+    push: {
+      android: {
+        senderId: '52244621335',
+        apiKey: 'AIzaSyAVU2RjkybQvfY7lbbONRoFgO24M114NIo'
+      }
+      // },
+      // ios: {
+      //   pfx: '',
+      //   passphrase: '', // optional password to your p12/PFX
+      //   bundleId: '',
+      //   production: false
+      // }
+    }
 	} );
 
 	app.get( '/app.json', function ( req, res ) {
