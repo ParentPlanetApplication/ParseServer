@@ -18,6 +18,7 @@ set :linked_dirs, %w(node_modules)
 namespace :deploy do
   desc "Install node modules"
   after :updated, :install_node_modules do
+    puts "#{fetch :application}"
     on roles(:app) do
       within release_path do
         execute :npm, "install", "-s"
