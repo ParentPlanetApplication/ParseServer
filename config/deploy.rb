@@ -18,7 +18,15 @@ namespace :deploy do
 
   desc 'Restart application'
   task :restart do
-    invoke 'pm2:restart'
+    # invoke 'pm2:restart'
+    desc "Start server"
+    on roles(:app) do
+      within release_path do
+        execute "echo Restarting your service now."
+        execute "cd #{release_path} && APP_NAME=\"#{fetch :application}\" npm run pm2"
+        execute "echo Deployer Successfully deployed this Application"
+      end
+    end
   end
 
   after :publishing, :restart

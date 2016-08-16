@@ -16,6 +16,9 @@
     "parse-server": "^2.2.17"
   },
   "scripts": {
+    "pm2:start": "pm2 start app.js --name $APP_NAME -l app_logs.log",
+    "pm2:restart": "pm2 stop $APP_NAME && pm2 delete $APP_NAME && npm run pm2:start",
+    "pm2": "if pm2 list | grep $APP_NAME; then npm run pm2:restart; else npm run pm2:start; fi",
     "start": "node index.js"
   },
   "engines": {
