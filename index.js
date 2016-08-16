@@ -65,8 +65,8 @@ p.then( config => {
 	var port = process.env.PORT || 1337;
 	var httpServer = require( 'http' ).createServer( app );
 	httpServer.listen( port, function () {
-		console.log( 'parse server running on port ' + port + '.' );
-    console.log( 'currently, server url: ' + serverURL );
+		// console.log( 'parse server running on port ' + port + '.' );
+    console.log( 'currently, server url: ' + serverURL + ' with port ' + port );
 	} );
 
 	// This will enable the Live Query real-time server

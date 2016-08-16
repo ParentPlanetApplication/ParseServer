@@ -12,6 +12,8 @@ set :npm_flags, '--silent --no-progress'    # default
 set :npm_roles, :all                                     # default
 set :npm_env_variables, {}                               # default
 
+# set :pm2_config, 'config/pm2.json'
+
 namespace :deploy do
 
   desc 'Restart application'
