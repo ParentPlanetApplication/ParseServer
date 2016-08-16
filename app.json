@@ -24,6 +24,10 @@
     "DATABASEURI": {
       "description": "URL to connect to mongoDB instance",
       "value": "mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k"
+    },
+    "CLIENTKEY": {
+      "description": "client key for parse",
+      "value": "ifftxPsVeidLeCCvgaGIZHEC3bO4g3MP9UwaZHxM"
     }
   }
 }

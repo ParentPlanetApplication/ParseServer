@@ -22,6 +22,7 @@ p.then( config => {
 		cloud: __dirname + '/cloud/main.js',
 		appId: config.data.env.APP_ID.value,
 		masterKey: config.data.env.MASTER_KEY.value,
+    clientKey: config.data.env.CLIENTKEY.value,
 		serverURL: serverURL,
 		liveQuery: {
 			classNames: [ "Posts", "Comments" ] // List of classes to support for query subscriptions
@@ -66,6 +67,7 @@ p.then( config => {
 	var httpServer = require( 'http' ).createServer( app );
 	httpServer.listen( port, function () {
 		// console.log( 'parse server running on port ' + port + '.' );
+    console.log('clientKey:' + config.data.env.CLIENTKEY.value);
     console.log( 'currently, server url: ' + serverURL + ' with port ' + port );
 	} );
 
