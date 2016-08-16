@@ -18,9 +18,9 @@ set :linked_dirs, %w(node_modules)
 namespace :deploy do
   desc "Install node modules"
   after :updated, :install_node_modules do
-    puts "#{fetch :application}"
-    on roles(:app) do
+    on roles :all do
       within release_path do
+        puts "#{release_path}"
         execute :npm, "install", "-s"
       end
     end
@@ -28,10 +28,10 @@ namespace :deploy do
 
   desc "Start server"
   after :finished, :restart do
-    on roles(:app) do
+    on roles :all do
       within release_path do
         execute "echo Restarting your service now."
-        execute "cd #{release_path} && APP_NAME=\"#{fetch :application}\" npm run pm2"
+        execute "cd #{release_path} && export APP_NAME=\"#{fetch :application}\" && npm run pm2"
         execute "echo Deployer Successfully deployed this Application"
       end
     end
