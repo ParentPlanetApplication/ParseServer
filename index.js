@@ -31,14 +31,19 @@ p.then( config => {
       android: {
         senderId: '52244621335',
         apiKey: 'AIzaSyAVU2RjkybQvfY7lbbONRoFgO24M114NIo'
-      }
-      // },
-      // ios: {
-      //   pfx: '',
-      //   passphrase: '', // optional password to your p12/PFX
-      //   bundleId: '',
-      //   production: false
-      // }
+      },
+      ios: [
+        {
+          pfx: 'certs/cert-dev.p12',
+          bundleId: 'com.ppllc.p2',
+          production: false
+        }//,
+        // {
+        //   cert: './p12/production.pem',
+        //   bundleId: 'com.ppllc.p2',
+        //   production: true // Prod
+        // }
+      ]
     }
 	} );
 
