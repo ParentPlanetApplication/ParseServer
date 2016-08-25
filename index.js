@@ -71,6 +71,23 @@ p.then( config => {
 
 		// Serve static assets from the /public folder
 		app.use( '/public', express.static( path.join( __dirname, '/public' ) ) );
+    app.use( '/apps', express.static( path.join( __dirname, '/apps' ) ) );
+
+    app.get( '/apps/*/request_password_reset', function ( req, res ) {
+			res.sendFile( path.join( __dirname, '/apps/choose_password.html' ) );
+		} );
+
+    app.get( '/apps/*/password_reset_success', function ( req, res ) {
+			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+		} );
+
+    app.get( '/apps/*/verify_email_success', function ( req, res ) {
+			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+		} );
+
+    app.get( '/apps/*/invalid_link', function ( req, res ) {
+			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+		} );
 
 		// Serve the Parse API on the /parse URL prefix
 		var mountPath = config.data.env.PARSE_MOUNT.value;
