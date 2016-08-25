@@ -46,8 +46,8 @@ p.then( config => {
       ]
 			},
 			appName: 'Parent Planet',
-			publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/',
-			// publicServerURL: 'http://localhost:1337/',
+			publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/parse',
+			// publicServerURL: 'http://localhost:1337/parse',
 			emailAdapter: {
 				module: 'parse-server-mandrill-adapter',
 				options: {
