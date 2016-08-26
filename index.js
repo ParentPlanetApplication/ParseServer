@@ -13,8 +13,8 @@ var app = express();
 
 p = jsonFile( './app.json' );
 
+var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 p.then( config => {
-		var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.server;
 
 		var api = new ParseServer( {
@@ -125,8 +125,12 @@ p.then( config => {
 		// }, function() {
 		//   console.log('Create an queue done.');
 		// });
+    var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
-		var Queue = kue.createQueue();
+		var ui = require( 'kue-ui' );
+		var Queue = kue.createQueue( {
+			redis: redis_url
+		} );
 		var jobName = 'emailSender-test';
 		var job = Queue
 			.createJob( jobName, {
@@ -139,7 +143,14 @@ p.then( config => {
 			} )
 			.priority( 'normal' );
 
-		Queue.every( '0 10 17 * * *', job );
+		ui.setup( {
+			apiURL: '/queue/api', // IMPORTANT: specify the api url
+			baseURL: '/queue', // IMPORTANT: specify the base url
+			updateInterval: 5000 // Optional: Fetches new data every 5000 ms
+		} );
+
+		// Queue.every( '0 10 17 * * *', job );
+		Queue.every( '0 20 * * * *', job );
 
 		Queue.process( jobName, function ( job, done ) {
 			console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
@@ -212,7 +223,8 @@ p.then( config => {
 		//     jobQueue.promote();
 		// });
 		// start the UI
-		app.use( '/queue', kue.app );
+    app.use('/queue/api', kue.app);
+		app.use( '/queue', ui.app );
 		// kue.app.listen( 6006 );
 		// console.log( 'UI started on port 6006' );
 	}, error => {

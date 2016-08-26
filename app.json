@@ -28,6 +28,10 @@
     "CLIENTKEY": {
       "description": "client key for parse",
       "value": "ifftxPsVeidLeCCvgaGIZHEC3bO4g3MP9UwaZHxM"
+    },
+    "REDIS": {
+      "localhost": "redis://localhost:6379",
+      "server": "redis://redistogo:5350a8b3ff4106fae7944e46446c7374@viperfish.redistogo.com:11535/"
     }
   }
 }
