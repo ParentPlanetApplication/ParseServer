@@ -71,21 +71,21 @@ p.then( config => {
 
 		// Serve static assets from the /public folder
 		app.use( '/public', express.static( path.join( __dirname, '/public' ) ) );
-    app.use( '/apps', express.static( path.join( __dirname, '/apps' ) ) );
+		app.use( '/apps', express.static( path.join( __dirname, '/apps' ) ) );
 
-    app.get( '/apps/*/request_password_reset', function ( req, res ) {
+		app.get( '/apps/*/request_password_reset', function ( req, res ) {
 			res.sendFile( path.join( __dirname, '/apps/choose_password.html' ) );
 		} );
 
-    app.get( '/apps/*/password_reset_success', function ( req, res ) {
+		app.get( '/apps/*/password_reset_success', function ( req, res ) {
 			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
 		} );
 
-    app.get( '/apps/*/verify_email_success', function ( req, res ) {
+		app.get( '/apps/*/verify_email_success', function ( req, res ) {
 			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
 		} );
 
-    app.get( '/apps/*/invalid_link', function ( req, res ) {
+		app.get( '/apps/*/invalid_link', function ( req, res ) {
 			res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
 		} );
 
@@ -114,6 +114,107 @@ p.then( config => {
 		// This will enable the Live Query real-time server
 		ParseServer.createLiveQueryServer( httpServer );
 
+		// Start kue service
+		// const kue = require( 'kue' );
+		// app.use('/queue', kue.app);
+		//
+		// var schedule = require('./queue/schedule');
+		//
+		// schedule.create({
+		//   title: 'at ' + (new Date())
+		// }, function() {
+		//   console.log('Create an queue done.');
+		// });
+		var kue = require( 'kue-scheduler' );
+		var Queue = kue.createQueue();
+		var jobName = 'emailSender-test';
+		var job = Queue
+			.createJob( jobName, {
+				title: 'will send email every day at 5pm'
+			} )
+			.attempts( 3 )
+			.backoff( {
+				delay: 60000,
+				type: 'fixed'
+			} )
+			.priority( 'normal' );
+
+		Queue.every( '0 10 17 * * *', job );
+
+		Queue.process( jobName, function ( job, done ) {
+			console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
+			done( null, {
+				deliveredAt: new Date()
+			} );
+		} );
+
+		//listen on scheduler errors
+		Queue.on( 'schedule error', function ( error ) {
+			//handle all scheduling errors here
+			console.log( error );
+		} );
+
+
+		//listen on success scheduling
+		Queue.on( 'schedule success', function ( job ) {
+			//a highly recommended place to attach
+			//job instance level events listeners
+
+			job.on( 'complete', function ( result ) {
+				console.log( 'Job completed with data ', result );
+
+			} ).on( 'failed attempt', function ( errorMessage, doneAttempts ) {
+				console.log( 'Job failed' );
+
+			} ).on( 'failed', function ( errorMessage ) {
+				console.log( 'Job failed' );
+
+			} ).on( 'progress', function ( progress, data ) {
+				console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
+			} );
+		} );
+		// var jobQueue = kue.createQueue();
+		// var jobName = 'emailSender';
+		//
+		// var job = jobQueue.createJob( jobName, {
+		//   title: 'send email every day at 5pm'
+		// } )
+		// 	.priority( 'high' )
+		//   .removeOnComplete(false)
+		// 	.attempts( 3 )
+		// 	.save();
+		//
+		// jobQueue.every( 120000, job );
+		//
+		// job.on( 'complete', function () {
+		// 	console.log( 'renewal job completed' );
+		// 	console.log( '' );
+		// } ).on( 'progress', function ( progress, data ) {
+		// 	console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
+		// } );
+		//
+		// jobQueue.process( jobName, function ( job, done ) {
+		//   var date = new Date();
+		// 	console.log( 'running job emailSender at ' + date);
+		//   var miliseconds = 120000;
+		//
+		//   jobQueue.create(jobName).delay(miliseconds).save();
+		//
+		// 	done();
+		// } );
+		//
+		// kue.Job.rangeByType(jobName, 'delayed', 0, 10, '', function (err, jobs) {
+		//     if (err) {return handleErr(err);}
+		//     if (!jobs.length) {
+		//         jobQueue.create(jobName).save();
+		//     }
+		//     // Start checking for delayed jobs.  This defaults to checking every 5 seconds
+		//     jobQueue.promote();
+		// });
+		// start the UI
+		app.use( '/queue', kue.app );
+		// kue.app.listen( 6006 );
+		// console.log( 'UI started on port 6006' );
 	}, error => {
 		if ( error instanceof SyntaxError ) {
 			console.log( 'Your config file contains invalid JSON. Exiting.' );
