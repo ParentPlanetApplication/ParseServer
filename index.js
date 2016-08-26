@@ -13,8 +13,8 @@ var app = express();
 
 p = jsonFile( './app.json' );
 
-var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 p.then( config => {
+    var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.server;
 
 		var api = new ParseServer( {
@@ -128,7 +128,7 @@ p.then( config => {
 		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
     var url = require('url');
-    
+
     kue.redis.createClient = function () {
 			var redisUrl = url.parse( redis_url ),
 				client = redis.createClient( redisUrl.port, redisUrl.hostname );
