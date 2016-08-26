@@ -127,7 +127,8 @@ p.then( config => {
 		// });
 		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
-
+    var url = require('url');
+    
     kue.redis.createClient = function () {
 			var redisUrl = url.parse( redis_url ),
 				client = redis.createClient( redisUrl.port, redisUrl.hostname );
@@ -139,9 +140,7 @@ p.then( config => {
 
 		var ui = require( 'kue-ui' );
 		var redis = require( 'kue/lib/redis' );
-		var Queue = kue.createQueue( {
-			redis: redis_url
-		} );
+		var Queue = kue.createQueue();
 		var jobName = 'emailSender-test';
 		var job = Queue
 			.createJob( jobName, {
