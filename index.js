@@ -125,9 +125,20 @@ p.then( config => {
 		// }, function() {
 		//   console.log('Create an queue done.');
 		// });
-    var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
+		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
+
+    kue.redis.createClient = function () {
+			var redisUrl = url.parse( redis_url ),
+				client = redis.createClient( redisUrl.port, redisUrl.hostname );
+			if ( redisUrl.auth ) {
+				client.auth( redisUrl.auth.split( ":" )[ 1 ] );
+			}
+			return client;
+		};
+
 		var ui = require( 'kue-ui' );
+		var redis = require( 'kue/lib/redis' );
 		var Queue = kue.createQueue( {
 			redis: redis_url
 		} );
@@ -223,7 +234,7 @@ p.then( config => {
 		//     jobQueue.promote();
 		// });
 		// start the UI
-    app.use('/queue/api', kue.app);
+		app.use( '/queue/api', kue.app );
 		app.use( '/queue', ui.app );
 		// kue.app.listen( 6006 );
 		// console.log( 'UI started on port 6006' );
