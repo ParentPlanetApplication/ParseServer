@@ -15,10 +15,10 @@ p = jsonFile( './app.json' );
 
 p.then( config => {
     var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
-		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.server;
+		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.aws;
 
 		var api = new ParseServer( {
-			databaseURI: config.data.env.DATABASEURI.value,
+			databaseURI: config.data.env.DATABASEURI.aws,
 			cloud: __dirname + '/cloud/main.js',
 			appId: config.data.env.APP_ID.value,
 			masterKey: config.data.env.MASTER_KEY.value,
@@ -46,7 +46,8 @@ p.then( config => {
       ]
 			},
 			appName: 'Parent Planet',
-			publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/parse',
+			// publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/parse',
+			publicServerURL: serverURL,
 			// publicServerURL: 'http://localhost:1337/parse',
 			emailAdapter: {
 				module: 'parse-server-mandrill-adapter',
@@ -128,20 +129,20 @@ p.then( config => {
 		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
     var url = require('url');
-
-    kue.redis.createClient = function () {
-			var redisUrl = url.parse( redis_url ),
-				client = redis.createClient( redisUrl.port, redisUrl.hostname );
-			if ( redisUrl.auth ) {
-				client.auth( redisUrl.auth.split( ":" )[ 1 ] );
-			}
-			return client;
-		};
+    // var redis = require( 'redis' );
+    //
+    // kue.redis.createClient = function () {
+		// 	var redisUrl = url.parse( redis_url ),
+		// 		client = redis.createClient( redisUrl.port, redisUrl.hostname );
+		// 	if ( redisUrl.auth ) {
+		// 		client.auth( redisUrl.auth.split( ":" )[ 1 ] );
+		// 	}
+		// 	return client;
+		// };
 
 		var ui = require( 'kue-ui' );
-		var redis = require( 'kue/lib/redis' );
 		var Queue = kue.createQueue();
-		var jobName = 'emailSender-test';
+		var jobName = 'aws.emailSender';
 		var job = Queue
 			.createJob( jobName, {
 				title: 'will send email every day at 5pm'
@@ -160,13 +161,42 @@ p.then( config => {
 		} );
 
 		// Queue.every( '0 10 17 * * *', job );
-		Queue.every( '0 20 * * * *', job );
+		Queue.every( '0 10 * * * *', job );
+    var isRunning = false;
 
 		Queue.process( jobName, function ( job, done ) {
+      console.log('current status, isRunning = ' + isRunning );
+      if( isRunning ) {
+        console.log( '\Job running ....' );
+        done( null, {
+          status: 'running',
+          message: '',
+          deliveredAt: new Date()
+        } );
+        return;
+      }
+      isRunning = true;
 			console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-			done( null, {
-				deliveredAt: new Date()
-			} );
+      Parse.Cloud.run('hello', {}, {
+        success: function(secretString) {
+          // obtained secret string
+          done( null, {
+            status: 'successfully',
+            message: secretString,
+    				deliveredAt: new Date()
+    			} );
+          isRunning = false;
+        },
+        error: function(error) {
+          // error
+          isRunning = false;
+          done( null, {
+            status: 'fail',
+            message: error,
+    				deliveredAt: new Date()
+    			} );
+        }
+      });
 		} );
 
 		//listen on scheduler errors
@@ -194,44 +224,7 @@ p.then( config => {
 				console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
 			} );
 		} );
-		// var jobQueue = kue.createQueue();
-		// var jobName = 'emailSender';
-		//
-		// var job = jobQueue.createJob( jobName, {
-		//   title: 'send email every day at 5pm'
-		// } )
-		// 	.priority( 'high' )
-		//   .removeOnComplete(false)
-		// 	.attempts( 3 )
-		// 	.save();
-		//
-		// jobQueue.every( 120000, job );
-		//
-		// job.on( 'complete', function () {
-		// 	console.log( 'renewal job completed' );
-		// 	console.log( '' );
-		// } ).on( 'progress', function ( progress, data ) {
-		// 	console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
-		// } );
-		//
-		// jobQueue.process( jobName, function ( job, done ) {
-		//   var date = new Date();
-		// 	console.log( 'running job emailSender at ' + date);
-		//   var miliseconds = 120000;
-		//
-		//   jobQueue.create(jobName).delay(miliseconds).save();
-		//
-		// 	done();
-		// } );
-		//
-		// kue.Job.rangeByType(jobName, 'delayed', 0, 10, '', function (err, jobs) {
-		//     if (err) {return handleErr(err);}
-		//     if (!jobs.length) {
-		//         jobQueue.create(jobName).save();
-		//     }
-		//     // Start checking for delayed jobs.  This defaults to checking every 5 seconds
-		//     jobQueue.promote();
-		// });
+
 		// start the UI
 		app.use( '/queue/api', kue.app );
 		app.use( '/queue', ui.app );

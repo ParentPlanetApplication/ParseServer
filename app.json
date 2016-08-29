@@ -19,11 +19,13 @@
     "SERVER_URL": {
       "description": "URL to connect to your Server instance (update with your app's name + PARSE_MOUNT)",
       "localhost": "http://localhost:1337/parse",
-      "server": "https://mighty-hamlet-52509.herokuapp.com/parse"
+      "heroku": "https://mighty-hamlet-52509.herokuapp.com/parse",
+      "aws": "https://server.parentplanet.com/parse"
     },
     "DATABASEURI": {
       "description": "URL to connect to mongoDB instance",
-      "value": "mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k"
+      "heroku": "mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k",
+      "aws": "mongodb://p2user:PokePee2016!@app.parentplanet.com:27017/heroku_gflrmr6k"
     },
     "CLIENTKEY": {
       "description": "client key for parse",
