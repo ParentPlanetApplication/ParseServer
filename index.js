@@ -115,30 +115,9 @@ p.then( config => {
 		// This will enable the Live Query real-time server
 		ParseServer.createLiveQueryServer( httpServer );
 
-		// Start kue service
-		// const kue = require( 'kue' );
-		// app.use('/queue', kue.app);
-		//
-		// var schedule = require('./queue/schedule');
-		//
-		// schedule.create({
-		//   title: 'at ' + (new Date())
-		// }, function() {
-		//   console.log('Create an queue done.');
-		// });
 		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
     var url = require('url');
-    // var redis = require( 'redis' );
-    //
-    // kue.redis.createClient = function () {
-		// 	var redisUrl = url.parse( redis_url ),
-		// 		client = redis.createClient( redisUrl.port, redisUrl.hostname );
-		// 	if ( redisUrl.auth ) {
-		// 		client.auth( redisUrl.auth.split( ":" )[ 1 ] );
-		// 	}
-		// 	return client;
-		// };
 
 		var ui = require( 'kue-ui' );
 		var Queue = kue.createQueue();
