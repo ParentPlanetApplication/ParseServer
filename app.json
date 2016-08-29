@@ -20,7 +20,7 @@
       "description": "URL to connect to your Server instance (update with your app's name + PARSE_MOUNT)",
       "localhost": "http://localhost:1337/parse",
       "heroku": "https://mighty-hamlet-52509.herokuapp.com/parse",
-      "aws": "https://server.parentplanet.com/parse"
+      "aws": "http://server.parentplanet.com/parse"
     },
     "DATABASEURI": {
       "description": "URL to connect to mongoDB instance",
