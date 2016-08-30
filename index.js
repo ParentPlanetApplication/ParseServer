@@ -34,14 +34,9 @@ p.then( config => {
 				},
 				ios: [
 					{
-						pfx: 'certs/cert-dev.p12',
-						bundleId: 'com.ppllc.p2',
-						production: false
-          },
-					{
-						pfx: 'certs/cert-prod.p12',
-						bundleId: 'com.ppllc.p2',
-						production: true // Prod
+						pfx: 'certs/PushCert.p12',
+						bundleId: 'com.ppllc.p2'
+						// production: false
           }
         ]
 			},
