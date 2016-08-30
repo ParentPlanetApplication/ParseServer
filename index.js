@@ -14,7 +14,7 @@ var app = express();
 p = jsonFile( './app.json' );
 
 p.then( config => {
-    var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
+		var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.aws;
 
 		var api = new ParseServer( {
@@ -37,13 +37,13 @@ p.then( config => {
 						pfx: 'certs/cert-dev.p12',
 						bundleId: 'com.ppllc.p2',
 						production: false
-        } //,
-        // {
-        //   cert: './p12/production.pem',
-        //   bundleId: 'com.ppllc.p2',
-        //   production: true // Prod
-        // }
-      ]
+          },
+					{
+						pfx: 'certs/cert-prod.p12',
+						bundleId: 'com.ppllc.p2',
+						production: true // Prod
+          }
+        ]
 			},
 			appName: 'Parent Planet',
 			// publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/parse',
@@ -117,7 +117,7 @@ p.then( config => {
 
 		var redis_url = localhost ? config.data.env.REDIS.localhost : config.data.env.REDIS.server;
 		var kue = require( 'kue-scheduler' );
-    var url = require('url');
+		var url = require( 'url' );
 
 		var ui = require( 'kue-ui' );
 		var Queue = kue.createQueue();
@@ -141,41 +141,41 @@ p.then( config => {
 
 		// Queue.every( '0 10 17 * * *', job );
 		Queue.every( '0 10 * * * *', job );
-    var isRunning = false;
+		var isRunning = false;
 
 		Queue.process( jobName, function ( job, done ) {
-      console.log('current status, isRunning = ' + isRunning );
-      if( isRunning ) {
-        console.log( '\Job running ....' );
-        done( null, {
-          status: 'running',
-          message: '',
-          deliveredAt: new Date()
-        } );
-        return;
-      }
-      isRunning = true;
+			console.log( 'current status, isRunning = ' + isRunning );
+			if ( isRunning ) {
+				console.log( '\Job running ....' );
+				done( null, {
+					status: 'running',
+					message: '',
+					deliveredAt: new Date()
+				} );
+				return;
+			}
+			isRunning = true;
 			console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-      Parse.Cloud.run('hello', {}, {
-        success: function(secretString) {
-          // obtained secret string
-          done( null, {
-            status: 'successfully',
-            message: secretString,
-    				deliveredAt: new Date()
-    			} );
-          isRunning = false;
-        },
-        error: function(error) {
-          // error
-          isRunning = false;
-          done( null, {
-            status: 'fail',
-            message: error,
-    				deliveredAt: new Date()
-    			} );
-        }
-      });
+			Parse.Cloud.run( 'hello', {}, {
+				success: function ( secretString ) {
+					// obtained secret string
+					done( null, {
+						status: 'successfully',
+						message: secretString,
+						deliveredAt: new Date()
+					} );
+					isRunning = false;
+				},
+				error: function ( error ) {
+					// error
+					isRunning = false;
+					done( null, {
+						status: 'fail',
+						message: error,
+						deliveredAt: new Date()
+					} );
+				}
+			} );
 		} );
 
 		//listen on scheduler errors
