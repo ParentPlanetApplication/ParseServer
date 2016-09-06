@@ -17,6 +17,11 @@ p.then( config => {
 		var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.aws;
 
+    var fs = require("fs");
+    var configCRT = {
+        cert: fs.readFileSync('certs/server_parentplanet_com.crt')
+    };
+
 		var api = new ParseServer( {
 			databaseURI: config.data.env.DATABASEURI.aws,
 			cloud: __dirname + '/cloud/main.js',
@@ -106,6 +111,7 @@ p.then( config => {
 
 		var port = process.env.PORT || 1337;
 		var httpServer = require( 'http' ).createServer( app );
+    // var httpServer = require('https').createServer( configCRT, app );
 		httpServer.listen( port, function () {
 			// console.log( 'parse server running on port ' + port + '.' );
 			console.log( 'clientKey:' + config.data.env.CLIENTKEY.value );
@@ -121,7 +127,7 @@ p.then( config => {
 
 		var ui = require( 'kue-ui' );
 		var Queue = kue.createQueue();
-		var jobName = 'aws.emailSender';
+		var jobName = 'emailSender';
 		var job = Queue
 			.createJob( jobName, {
 				title: 'will send email every day at 5pm'
@@ -140,7 +146,7 @@ p.then( config => {
 		} );
 
 		// Queue.every( '0 10 17 * * *', job );
-		Queue.every( '0 10 * * * *', job );
+		Queue.every( '0 10 17 * * *', job );
 		var isRunning = false;
 
 		Queue.process( jobName, function ( job, done ) {
@@ -156,7 +162,7 @@ p.then( config => {
 			}
 			isRunning = true;
 			console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-			Parse.Cloud.run( 'hello', {}, {
+			Parse.Cloud.run( 'emailSender', {}, {
 				success: function ( secretString ) {
 					// obtained secret string
 					done( null, {
