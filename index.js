@@ -17,11 +17,6 @@ p.then( config => {
 		var localhost = process.env.PARSE_SERVER_LOCALHOST !== undefined;
 		var serverURL = localhost ? config.data.env.SERVER_URL.localhost : config.data.env.SERVER_URL.aws;
 
-    var fs = require("fs");
-    var configCRT = {
-        cert: fs.readFileSync('certs/server_parentplanet_com.crt')
-    };
-
 		var api = new ParseServer( {
 			databaseURI: config.data.env.DATABASEURI.aws,
 			cloud: __dirname + '/cloud/main.js',
@@ -110,8 +105,15 @@ p.then( config => {
 		} );
 
 		var port = process.env.PORT || 1337;
-		var httpServer = require( 'http' ).createServer( app );
-    // var httpServer = require('https').createServer( configCRT, app );
+    var fs = require("fs");
+    var configCRT = {
+      key: fs.readFileSync('certs/ssl/server_parentplanet_com.pem', 'utf8'),
+      cert: fs.readFileSync('certs/ssl/server_parentplanet_com.crt', 'utf8'),
+      ca: fs.readFileSync('certs/ssl/server_parentplanet_com.ca-bundle', 'utf8')
+    };
+
+		// var httpServer = require( 'http' ).createServer( app );
+    var httpServer = require('https').createServer( configCRT, app );
 		httpServer.listen( port, function () {
 			// console.log( 'parse server running on port ' + port + '.' );
 			console.log( 'clientKey:' + config.data.env.CLIENTKEY.value );
