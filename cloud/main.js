@@ -375,6 +375,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			if ( section === "event" ) {
 				add( null, 'Schedule Events', headerStyle );
 			}
+      if ( section === "cancel" ) {
+				add( null, 'Canceled Events', headerStyle );
+			}
+      if ( section === "update" ) {
+				add( null, 'Updated Events', headerStyle );
+			}
 			if ( section === "message" ) {
 				add( null, 'Messages', headerStyle );
 			}
@@ -433,6 +439,63 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				suffix();
 			} //eo event
+      function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
+				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
+				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
+				var _endDay = d.end ? moment( d.end ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
+				var _endTime = d.end ? moment( d.end ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
+				var _untilDate = d.until ? moment( new Date( d.until ) ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : '';
+				var _when = ( _startDay == _endDay ) && ( _startDay != 'TBA' ) ? _startDay + ' from ' + _startTime + ' until ' + _endTime : _startDay + ' ' + _startTime + ' until ' + _endDay + ' ' + _endTime;
+				var isRepeating = d.repeat && /never/i.test( d.repeat ) ? false : true;
+				var _repeat = isRepeating ? d.repeat + ' until ' + _untilDate : null;
+				gray();
+				if ( i === recipient[ section ].length - 1 ) {
+					styling += 'padding-bottom: 1.5em; ';
+				}
+				prefix( styling );
+        console.log(JSON.stringify(d));
+				add( null, d.title, titleStyle );
+				add( 'Created By', d.groupName );
+        add( 'Cancel By', d.groupName);
+				add( 'When', _when );
+				add( 'Where', d.location );
+				add( 'Notes', d.note )
+				checkData( 'html', d );
+				if ( isRepeating && _repeat ) {
+					add( 'Repeats', _repeat );
+				}
+				suffix();
+			} //eo cancelEvent
+      function updateEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
+				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
+				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
+				var _endDay = d.end ? moment( d.end ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
+				var _endTime = d.end ? moment( d.end ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
+				var _untilDate = d.until ? moment( new Date( d.until ) ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : '';
+				var _when = ( _startDay == _endDay ) && ( _startDay != 'TBA' ) ? _startDay + ' from ' + _startTime + ' until ' + _endTime : _startDay + ' ' + _startTime + ' until ' + _endDay + ' ' + _endTime;
+				var isRepeating = d.repeat && /never/i.test( d.repeat ) ? false : true;
+				var _repeat = isRepeating ? d.repeat + ' until ' + _untilDate : null;
+				gray();
+				if ( i === recipient[ section ].length - 1 ) {
+					styling += 'padding-bottom: 1.5em; ';
+				}
+				prefix( styling );
+        console.log(JSON.stringify(d));
+				add( null, d.title, titleStyle );
+				add( 'Created By', d.groupName );
+        add( 'Edit By', d.groupName);
+				add( 'When', _when );
+				add( 'Where', d.location );
+				add( 'Notes', d.note )
+				checkData( 'html', d );
+				if ( isRepeating && _repeat ) {
+					add( 'Repeats', _repeat );
+				}
+				suffix();
+			} //eo updateEvents
+
 			function homework() { //{"assigned":"Mon","due":"Thurs","note":"SoCaToa","title":"Trig Idents","type":"Math"}
 				//put in code for homework formatting
 				gray();
@@ -453,6 +516,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			case 'event':
 				event();
 				break;
+      case 'cancel':
+        cancelEvents();
+        break;
+      case 'update':
+        updateEvents();
+        break;
 			case 'message':
 				message();
 				break;
@@ -644,6 +713,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 						}
                     ]
 				};
+
 				merge_vars.push( custom );
 				o = {
 					"email": addr
