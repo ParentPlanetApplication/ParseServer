@@ -5,6 +5,7 @@ var express = require( 'express' );
 var ParseServer = require( 'parse-server' ).ParseServer;
 var path = require( 'path' );
 var jsonFile = require( 'json-file-plus' );
+var nodalytics = require('nodalytics');
 
 // var databaseUri = 'mongodb://p2user:PokePee2016!@app.parentplanet.com:27017/heroku_gflrmr6k';
 // var databaseUri = 'mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k';
@@ -112,6 +113,37 @@ p.then( config => {
       ca: fs.readFileSync('certs/ssl/server_parentplanet_com.ca-bundle', 'utf8')
     };
 
+    app.use(nodalytics({
+        property_id: 'UA-83656948-1',
+        map: function (req, event) {
+            // This function is called to augment the default Google Analytics Event object
+            // created by nodalitics for the specified request.
+            // Parameters:
+            // - req - the Http request that triggered logging attempt
+            // - event - an object representing default values of the Google Analytics Event
+            //           created by nodalitics for the specified request
+            // Return: a Google Analytics Event object to log.
+            return event;
+        },
+        error: function (error, event, headers, req, grec, gres) {
+          console.log('error');
+          console.log(error);
+            // This function is called when an error occurs communicating with Google Analytics.
+            // Parameters:
+            // - error - the error
+            // - event - the Google Analytics Event logging of which failed
+            // - headers - HTTP request headers sent to Google Analytics
+            // - req - the HTTP request that triggered logging attempt
+            // - greq - the HTTP request sent to Google Analytics that failed
+            // - gres - the HTTP response from Google Analytics
+        },
+        success: function (event, headers, req, grec, gres) {
+          console.log('success');
+          console.log(event);
+            // This function is called after successful logging with Google Analytics.
+            // Parameters are the same as with the errors handler above.
+        }
+    }));
 		// var httpServer = require( 'http' ).createServer( app );
     var httpServer = require('https').createServer( configCRT, app );
 		httpServer.listen( port, function () {

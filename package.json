@@ -17,6 +17,7 @@
     "kue-scheduler": "^0.5.1",
     "kue-ui": "^0.1.0",
     "mailgun-js": "^0.7.12",
+    "nodalytics": "^1.1.0",
     "parse": "^1.9.1",
     "parse-server": "^2.2.17",
     "parse-server-mandrill-adapter": "^1.1.1",
