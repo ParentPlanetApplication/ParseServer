@@ -21,17 +21,18 @@ var configCRT = {
 var staging = express();
 var production = express();
 
-const program = require( 'commander' );
-program.option( '--mode [mode]', 'the mode only valid with aws, localhost, heroku' );
-program.parse( process.argv );
+// const program = require( 'commander' );
+// program.option( '--mode [mode]', 'the mode only valid with aws, localhost, heroku' );
+// program.parse( process.argv );
 
-let mode = program.mode || 'aws';
-mode = mode.toLowerCase();
-
-if (mode !== 'aws' && mode !== 'localhost' && mode !== 'heroku') {
-  console.log('mode [' + mode + '] variable only valid with: aws, heroku, and localhost');
-  process.exit(1);
-}
+var mode = 'aws';
+// let mode = program.mode || 'aws';
+// mode = mode.toLowerCase();
+//
+// if (mode !== 'aws' && mode !== 'localhost' && mode !== 'heroku') {
+//   console.log('mode [' + mode + '] variable only valid with: aws, heroku, and localhost');
+//   process.exit(1);
+// }
 
 p = jsonFile( './app.json' );
 
