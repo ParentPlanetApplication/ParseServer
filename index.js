@@ -47,10 +47,10 @@ p.then( config => {
     var productionURL = config.data.env.SERVER_URL[mode].production;
     var redisUrl = config.data.env.REDIS[mode].url;
 
-    // staging
-    setRoutes(staging, buildApiServer(config, stagingURL, false));
-    startServers(staging, 1337, stagingURL);
-    startBackgroundJob(staging, 'emailSender', redisUrl)
+    // // staging
+    // setRoutes(staging, buildApiServer(config, stagingURL, false));
+    // startServers(staging, 1337, stagingURL);
+    // startBackgroundJob(staging, 'emailSender', redisUrl)
 
     // production
     setRoutes(production, buildApiServer(config, productionURL, true));
