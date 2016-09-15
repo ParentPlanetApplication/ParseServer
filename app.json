@@ -10,7 +10,18 @@
     },
     "APP_ID": {
       "description": "A unique identifier for your app.",
-      "value": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR"
+      "localhost": {
+        "staging": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR-LocalStaging",
+        "production": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR-LocalProduction"
+      },
+      "aws": {
+        "staging": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR",
+        "production": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR-AwsProduction"
+      },
+      "heroku": {
+        "staging": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR-HerokuStaging",
+        "production": "C5E7FSUJXEJ7gTODpBLCuZShhJUxhu9AHjdlU4QR-HerokuProduction"
+      }
     },
     "MASTER_KEY": {
       "description": "A key that overrides all permissions. Keep this secret.",
@@ -18,22 +29,48 @@
     },
     "SERVER_URL": {
       "description": "URL to connect to your Server instance (update with your app's name + PARSE_MOUNT)",
-      "localhost": "http://localhost:1337/parse",
-      "heroku": "https://mighty-hamlet-52509.herokuapp.com/parse",
-      "aws": "https://server.parentplanet.com:1337/parse"
+      "localhost": {
+        "staging": "https://localhost:1337/parse",
+        "production": "https://localhost:13370/parse"
+      },
+      "aws": {
+        "staging": "https://server.parentplanet.com:1337/parse",
+        "production": "https://server.parentplanet.com:13370/parse"
+      },
+      "heroku": {
+        "staging": "https://mighty-hamlet-52509.herokuapp.com/parse",
+        "production": "https://mighty-hamlet-52509.herokuapp.com/parse"
+      }
     },
     "DATABASEURI": {
       "description": "URL to connect to mongoDB instance",
-      "heroku": "mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k",
-      "aws": "mongodb://p2user:PokePee2016!@app.parentplanet.com:27017/heroku_gflrmr6k"
+      "localhost": {
+        "staging": "mongodb://ppAdmin:1234qwer@localhost:27017/pp_staging",
+        "production": "mongodb://ppAdminProd:1234qwer@localhost:27017/pp_production"
+      },
+      "aws": {
+        "staging": "mongodb://p2user:PokePee2016!@app.parentplanet.com:27017/heroku_gflrmr6k",
+        "production": "mongodb://p2prouser:PokePee2016!@app.parentplanet.com:27017/parse_pro"
+      },
+      "heroku": {
+        "staging": "mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k",
+        "production": ""
+      }
     },
     "CLIENTKEY": {
       "description": "client key for parse",
       "value": "ifftxPsVeidLeCCvgaGIZHEC3bO4g3MP9UwaZHxM"
     },
     "REDIS": {
-      "localhost": "redis://localhost:6379",
-      "server": "redis://redistogo:5350a8b3ff4106fae7944e46446c7374@viperfish.redistogo.com:11535/"
+      "localhost": {
+        "url": "redis://localhost:6379"
+      },
+      "aws": {
+        "url": "redis://redistogo:5350a8b3ff4106fae7944e46446c7374@viperfish.redistogo.com:11535/"
+      },
+      "heroku": {
+        "url": ""
+      }
     }
   }
 }
