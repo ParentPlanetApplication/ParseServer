@@ -132,7 +132,8 @@ function buildApiServer(config, serverURL, production) {
         // Password reset email subject
         passwordResetSubject: 'Password Reset Request for *|appname|*',
         // Password reset email body
-        passwordResetBody: 'Hi *|username|*,\n\nYou requested a password reset for *|appname|*.\n\nClick here to reset it:\n*|link|*'
+        passwordResetBody: 'Hi *|username|*,\n\nYou requested a password reset for *|appname|*.\n\nClick here to reset it:\n*|link|*',
+		customUserAttributesMergeTags: []
       }
     }
   } );
