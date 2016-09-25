@@ -30,8 +30,8 @@
     "SERVER_URL": {
       "description": "URL to connect to your Server instance (update with your app's name + PARSE_MOUNT)",
       "localhost": {
-        "staging": "https://localhost:1337/parse",
-        "production": "https://localhost:13370/parse"
+        "staging": "http://localhost:1337/parse",
+        "production": "http://localhost:13370/parse"
       },
       "aws": {
         "staging": "https://server.parentplanet.com:1337/parse",

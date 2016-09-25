@@ -213,16 +213,30 @@ function googleAnalytics(app) {
 
 function startServers(app, port, serverURL, production) {
   // var httpServer = require( 'http' ).createServer( app );
-  var httpServer = require( 'https' ).createServer( configCRT, app );
-  httpServer.listen( port, function () {
-    // console.log( 'parse server running on port ' + port + '.' );
-    // console.log( 'currently, server url: ' + serverURL + ' with port ' + port );
-    if ( production ) {
-      console.log( 'Production Server: ' + serverURL);
-    } else {
-      console.log( 'Staging Server: ' + serverURL);
-    }
-  } );
+  var httpServer;
+  if(mode === 'localhost') {
+    httpServer = require( 'http' ).createServer( app );
+    httpServer.listen( port, function () {
+      // console.log( 'parse server running on port ' + port + '.' );
+      // console.log( 'currently, server url: ' + serverURL + ' with port ' + port );
+      if ( production ) {
+        console.log( 'Production Server: ' + serverURL);
+      } else {
+        console.log( 'Staging Server: ' + serverURL);
+      }
+    } );
+  } else {
+    httpServer = require( 'https' ).createServer( configCRT, app );
+    httpServer.listen( port, function () {
+      // console.log( 'parse server running on port ' + port + '.' );
+      // console.log( 'currently, server url: ' + serverURL + ' with port ' + port );
+      if ( production ) {
+        console.log( 'Production Server: ' + serverURL);
+      } else {
+        console.log( 'Staging Server: ' + serverURL);
+      }
+    } );
+  }
 
   // This will enable the Live Query real-time server
   ParseServer.createLiveQueryServer( httpServer );

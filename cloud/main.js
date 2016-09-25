@@ -302,8 +302,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	Parse.Cloud.useMasterKey();
 	var bigPromise = null; //the very, very, outer promise that holds the cloud function going until the final done is called!
 	var resultsArray = null; //this top-level array holds the results of searching for emails and then using query.each to populate the array;
-	var Email = Parse.Object.extend( "Email" );
-	var query = new Parse.Query( Email ); //query for all the outgoing emails
+	// var Email = Parse.Object.extend( "Email" );
+  var Email = Parse.Object.extend( "Email", {}, {
+    query: function () {
+      return new Parse.Query( this.className );
+    }
+  } );
+
+	// var query = new Parse.Query( Email ); //query for all the outgoing emails
+  var query = Email.query();
 	var skip = 0; //offset for search results
 	var MAXCOUNT = 101; //for handling Parse limits on how many query results to return (100 default)
 	var total = 0; //keep track of how many emails to potentially handle
@@ -1013,6 +1020,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				batchSender(); //first call to batchSender
 			},
 			error: function ( err, count ) {
+        console.log('---------------------------');
+        console.log(err);
 				success( '#820 --------------- error: ' + err + ' count:' + count + ' initial skip:' + skip ); //log previous steps results
 			}
 		} );
