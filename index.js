@@ -271,6 +271,8 @@ function startBackgroundJob(app, queueName, redisUrl) {
   // Queue.every( '0 10 17 * * *', job );
   // 12h UTC -> 5h -> Los Angeles
   Queue.every( '0 0 12 * * *', job );
+  // 0h UTC -> 17h -> Los Angeles
+  Queue.every( '0 0 0 * * *', job );
   var isRunning = false;
 
   Queue.process( jobName, function ( job, done ) {
