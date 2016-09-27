@@ -292,7 +292,7 @@ function startBackgroundJob(app, queueName, redisUrl) {
       success: function ( secretString ) {
         // obtained secret string
         done( null, {
-          status: 'successfully',
+          status: 'Status:successfully',
           message: secretString,
           deliveredAt: new Date()
         } );
