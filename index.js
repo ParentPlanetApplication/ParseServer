@@ -243,7 +243,7 @@ function startPingJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '00 30 05 * * *', job );
+	Queue.every( '00 00 07 * * *', job );
 	var isRunning = false;
 
 	Queue.process( jobName, function ( job, done ) {
