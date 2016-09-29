@@ -37,9 +37,7 @@ p.then( config => {
 		startServers( production, 13370, productionURL, true );
     performCleanup();
 		startBackgroundJob( production, 'emailSenderProduction', redisUrl );
-    if ( mode === 'localhost' ) {
-      startPingJob( production, 'pingJob', redisUrl );
-    }
+    startPingJob( production, 'pingJob', redisUrl );
 	}, error => {
 		if ( error instanceof SyntaxError ) {
 			console.log( 'Your config file contains invalid JSON. Exiting.' );
@@ -243,7 +241,7 @@ function startPingJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '15 * * * * *', job );
+	Queue.every( '* 5 * * * *', job );
 	var isRunning = false;
 
 	Queue.process( jobName, function ( job, done ) {
