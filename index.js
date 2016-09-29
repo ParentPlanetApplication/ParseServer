@@ -36,7 +36,9 @@ p.then( config => {
 		googleAnalytics( production );
 		startServers( production, 13370, productionURL, true );
     performCleanup();
-		startBackgroundJob( production, 'emailSenderProduction', redisUrl );
+    if(mode !== 'localhost') {
+      startBackgroundJob( production, 'emailSenderProduction', redisUrl );
+    }
     startPingJob( production, 'pingJob', redisUrl );
 	}, error => {
 		if ( error instanceof SyntaxError ) {
@@ -241,7 +243,7 @@ function startPingJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '* 5 * * * *', job );
+	Queue.every( '00 30 05 * * *', job );
 	var isRunning = false;
 
 	Queue.process( jobName, function ( job, done ) {
@@ -326,7 +328,7 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '0 0 0 * * *', job );
+	Queue.every( '00 00 00 * * *', job );
 	var isRunning = false;
 
 	Queue.process( jobName, function ( job, done ) {
