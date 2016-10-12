@@ -10,6 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.0.1",
+    "body-parser": "^1.15.2",
+    "command-line-args": "^3.0.1",
     "cron": "^1.1.0",
     "date.js": "^0.3.1",
     "express": "~4.11.x",
@@ -32,9 +34,8 @@
     "pm2:start": "pm2 start index.js --name $APP_NAME -l ParseServer_logs.log",
     "pm2:restart": "pm2 stop $APP_NAME && pm2 delete $APP_NAME && npm run pm2:start",
     "pm2": "if pm2 list | grep $APP_NAME; then npm run pm2:restart; else npm run pm2:start; fi",
-    "start": "node index.js --mode aws",
-    "localhost": "node index.js --mode localhost",
-    "heroku": "node index.js --mode heroku"
+    "start": "node index.js --aws",
+    "localhost": "node index.js --localhost"
   },
   "engines": {
     "node": ">=4.3"

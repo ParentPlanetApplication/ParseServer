@@ -6,40 +6,42 @@ var ParseServer = require( 'parse-server' ).ParseServer;
 var path = require( 'path' );
 var jsonFile = require( 'json-file-plus' );
 var nodalytics = require( 'nodalytics' );
+var bodyParser = require( 'body-parser' )
 
-// var databaseUri = 'mongodb://p2user:PokePee2016!@app.parentplanet.com:27017/heroku_gflrmr6k';
-// var databaseUri = 'mongodb://p2user:PokePee2016!@mw-appdesign.vn:27176/heroku_gflrmr6k';
+const commandLineArgs = require('command-line-args')
 
-// var fs = require( "fs" );
 var configCRT = {
 	key: require( "fs" ).readFileSync( 'certs/ssl/server_parentplanet_com.pem', 'utf8' ),
 	cert: require( "fs" ).readFileSync( 'certs/ssl/server_parentplanet_com.crt', 'utf8' ),
 	ca: require( "fs" ).readFileSync( 'certs/ssl/server_parentplanet_com.ca-bundle', 'utf8' )
 };
 
-// var app = express();
 var staging = express();
-var production = express();
+var response;
 
 var mode = 'aws';
-// mode = 'localhost';
+
+const optionDefinitions = [
+  { name: 'localhost', type: Boolean },
+  { name: 'aws', type: Boolean }
+]
+
+const options = commandLineArgs(optionDefinitions)
+
+if( options.localhost ) {
+  mode = 'localhost';
+}
 
 p = jsonFile( './app.json' );
 
 p.then( config => {
 		var stagingURL = config.data.env.SERVER_URL[ mode ].staging;
-		var productionURL = config.data.env.SERVER_URL[ mode ].production;
 		var redisUrl = config.data.env.REDIS[ mode ].url;
 
-		// production
-		setRoutes( production, buildApiServer( config, productionURL, true ) );
-		googleAnalytics( production );
-		startServers( production, 13370, productionURL, true );
-    performCleanup();
-    if(mode !== 'localhost') {
-      startBackgroundJob( production, 'emailSenderProduction', redisUrl );
-    }
-    startPingJob( production, 'pingJob', redisUrl );
+		// staging Server
+		setRoutes( staging, buildApiServer( config, stagingURL, true ) );
+		googleAnalytics( staging );
+		startServers( staging, 1337, stagingURL, true );
 	}, error => {
 		if ( error instanceof SyntaxError ) {
 			console.log( 'Your config file contains invalid JSON. Exiting.' );
@@ -62,14 +64,9 @@ p.then( config => {
 		process.exit( -1 );
 	} );
 
-function buildApiServer( config, serverURL, production ) {
-	var databaseURI = config.data.env.DATABASEURI[ mode ].staging;
+function buildApiServer( config, serverURL, staging ) {
+	var databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
 	var appId = config.data.env.APP_ID[ mode ].staging;
-
-	if ( production ) {
-		databaseURI = config.data.env.DATABASEURI[ mode ].production;
-		appId = config.data.env.APP_ID[ mode ].production;
-	}
 
 	var api = new ParseServer( {
 		databaseURI: databaseURI,
@@ -100,9 +97,7 @@ function buildApiServer( config, serverURL, production ) {
       ]
 		},
 		appName: 'Parent Planet',
-		// publicServerURL: 'https://mighty-hamlet-52509.herokuapp.com/parse',
-		publicServerURL: serverURL,
-		// publicServerURL: 'http://localhost:1337/parse',
+		publicServerURL: serverURL.replace(/\/parse$/, ''),
 		emailAdapter: {
 			module: 'parse-server-mandrill-adapter',
 			options: {
@@ -133,12 +128,27 @@ function setRoutes( app, api, config ) {
 	app.use( '/public', express.static( path.join( __dirname, '/public' ) ) );
 	app.use( '/apps', express.static( path.join( __dirname, '/apps' ) ) );
 
+  app.use( bodyParser.json() ); // to support JSON-encoded bodies
+  app.use( bodyParser.urlencoded( { // to support URL-encoded bodies
+    extended: true
+  } ) );
+
 	app.get( '/apps/*/request_password_reset', function ( req, res ) {
 		res.sendFile( path.join( __dirname, '/apps/choose_password.html' ) );
 	} );
 
-	app.get( '/apps/*/password_reset_success', function ( req, res ) {
-		res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+  app.post( '/apps/request_password_reset', function ( req, res ) {
+    console.log( req.body );
+    response = res;
+    checkUser( req );
+  } );
+
+	app.get( '/apps/password_reset_success', function ( req, res ) {
+		res.sendFile( path.join( __dirname, '/apps/password_updated.html' ) );
+	} );
+
+	app.get( '/apps/password_reset_fail', function ( req, res ) {
+		res.sendFile( path.join( __dirname, '/apps/password_cannot_updated.html' ) );
 	} );
 
 	app.get( '/apps/*/verify_email_success', function ( req, res ) {
@@ -177,26 +187,17 @@ function googleAnalytics( app ) {
 	} ) );
 }
 
-function startServers( app, port, serverURL, production ) {
-	// var httpServer = require( 'http' ).createServer( app );
+function startServers( app, port, serverURL, staging ) {
 	var httpServer;
 	if ( mode === 'localhost' ) {
 		httpServer = require( 'http' ).createServer( app );
 		httpServer.listen( port, function () {
-			if ( production ) {
-				console.log( 'Production Server: ' + serverURL );
-			} else {
-				console.log( 'Staging Server: ' + serverURL );
-			}
+			console.log( 'Staging Server: ' + serverURL );
 		} );
 	} else {
 		httpServer = require( 'https' ).createServer( configCRT, app );
 		httpServer.listen( port, function () {
-			if ( production ) {
-				console.log( 'Production Server: ' + serverURL );
-			} else {
-				console.log( 'Staging Server: ' + serverURL );
-			}
+			console.log( 'Staging Server: ' + serverURL );
 		} );
 	}
 
@@ -204,196 +205,70 @@ function startServers( app, port, serverURL, production ) {
 	ParseServer.createLiveQueryServer( httpServer );
 }
 
-function performCleanup() {
-  var kue = require('kue');
-  var ki = new kue;
-
-  ki.complete(function(err, ids) {
-    if (!ids) return;
-    ids.forEach(function(id, index) {
-      kue.Job.get(id, function(err, job) {
-        if (job) {
-          job.remove(function(){
-          });
-        }
-      });
-    });
+function checkUser( req ) {
+	var userQuery = Parse.Object.extend( "User", {}, {
+		query: function () {
+			return new Parse.Query( this.className );
+		}
+	} );
+	var query = userQuery.query();
+	query.equalTo( "username", req.body.username );
+  query.find({
+    success: function(results) {
+      if(results.length > 0) {
+        updatePassword(results[0], req.body.new_password)
+      } else {
+        gotoLink('password_reset_fail');
+      }
+    },
+    error: function(error) {
+      console.log(error);
+      gotoLink('password_reset_fail');
+    }
   });
+	// query.find( {
+	// 	success: function ( results ) {
+	// 		if ( results.length > 0 ) {
+	// 			// var user = Parse.User(results[0]);
+	// 			var result = results[ 0 ].set( 'password', req.body.new_password );
+	// 			console.log( result );
+	// 			result.save( null, {
+	// 				useMasterKey: true
+	// 			} ).then(
+	// 				function ( object ) {
+	// 					console.log( 'object' );
+	// 					console.log( object );
+	// 					res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+	// 				},
+	// 				function ( error ) {
+	// 					console.log( error );
+	// 				} );
+	// 		}
+	// 	},
+	// 	error: function ( error ) {
+	// 		console.log( error );
+	// 	}
+	// } );
 }
 
-function startPingJob( app, queueName, redisUrl ) {
-	var redis_url = redisUrl;
-	var kue = require( 'kue-scheduler' );
-	var url = require( 'url' );
-
-	var ui = require( 'kue-ui' );
-	var Queue = kue.createQueue();
-	var jobName = queueName;
-
-	var job = Queue
-		.createJob( jobName, {
-			title: 'will send email every day at 5pm'
-		} )
-		.priority( 'normal' )
-		.unique( jobName );
-
-	ui.setup( {
-		apiURL: '/queue/api', // IMPORTANT: specify the api url
-		baseURL: '/queue', // IMPORTANT: specify the base url
-		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
-	} );
-
-	Queue.every( '00 00 07 * * *', job );
-	var isRunning = false;
-
-	Queue.process( jobName, function ( job, done ) {
-		console.log( 'current status, isRunning = ' + isRunning );
-		if ( isRunning ) {
-			console.log( '\Job running ....' );
-			done( null, {
-				status: 'running',
-				message: '',
-				deliveredAt: new Date()
-			} );
-			return;
-		}
-		isRunning = true;
-		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-		Parse.Cloud.run( 'hello', {}, {
-			success: function ( secretString ) {
-				// obtained secret string
-				done( null, {
-					status: 'Status:successfully',
-					message: secretString,
-					deliveredAt: new Date()
-				} );
-				isRunning = false;
-			},
-			error: function ( error ) {
-				// error
-				isRunning = false;
-				done( null, {
-					status: 'fail',
-					message: error,
-					deliveredAt: new Date()
-				} );
-			}
+function updatePassword( user, password ) {
+	var result = user.set( 'password', password );
+	result.save( null, {
+		useMasterKey: true
+	} ).then(
+		function ( object ) {
+			console.log( 'object' );
+			console.log( object );
+      gotoLink('password_reset_success');
+		},
+		function ( error ) {
+			console.log( error );
+      gotoLink('password_reset_fail');
 		} );
-	} );
-
-	//listen on scheduler errors
-	Queue.on( 'schedule error', function ( error ) {
-		//handle all scheduling errors here
-		console.log( error );
-	} );
-
-
-	//listen on success scheduling
-	Queue.on( 'schedule success', function ( job ) {
-
-		job.on( 'complete', function ( result ) {
-			console.log( 'Job completed with data ', result );
-
-		} ).on( 'failed attempt', function ( errorMessage, doneAttempts ) {
-			console.log( 'Job failed' );
-
-		} ).on( 'failed', function ( errorMessage ) {
-			console.log( 'Job failed' );
-
-		} ).on( 'progress', function ( progress, data ) {
-			console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
-		} );
-	} );
 }
 
-function startBackgroundJob( app, queueName, redisUrl ) {
-	var redis_url = redisUrl;
-	var kue = require( 'kue-scheduler' );
-	var url = require( 'url' );
-
-	var ui = require( 'kue-ui' );
-	var Queue = kue.createQueue();
-	var jobName = queueName;
-
-	var job = Queue
-		.createJob( jobName, {
-			title: 'send email from table Email'
-		} )
-    .priority( 'normal' )
-		.unique( jobName );
-
-	ui.setup( {
-		apiURL: '/queue/api', // IMPORTANT: specify the api url
-		baseURL: '/queue', // IMPORTANT: specify the base url
-		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
-	} );
-
-	Queue.every( '00 00 00 * * *', job );
-	var isRunning = false;
-
-	Queue.process( jobName, function ( job, done ) {
-		console.log( 'current status, isRunning = ' + isRunning );
-		if ( isRunning ) {
-			console.log( '\Job running ....' );
-			done( null, {
-				status: 'running',
-				message: '',
-				deliveredAt: new Date()
-			} );
-			return;
-		}
-		isRunning = true;
-		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-		Parse.Cloud.run( 'emailSender', {}, {
-			success: function ( secretString ) {
-				// obtained secret string
-				done( null, {
-					status: 'Successfully',
-					message: secretString,
-					deliveredAt: new Date()
-				} );
-				isRunning = false;
-			},
-			error: function ( error ) {
-				// error
-				isRunning = false;
-				done( null, {
-					status: 'fail',
-					message: error,
-					deliveredAt: new Date()
-				} );
-			}
-		} );
-	} );
-
-	//listen on scheduler errors
-	Queue.on( 'schedule error', function ( error ) {
-		//handle all scheduling errors here
-		console.log( error );
-	} );
-
-
-	//listen on success scheduling
-	Queue.on( 'schedule success', function ( job ) {
-		//a highly recommended place to attach
-		//job instance level events listeners
-
-		job.on( 'complete', function ( result ) {
-			console.log( 'Job completed with data ', result );
-
-		} ).on( 'failed attempt', function ( errorMessage, doneAttempts ) {
-			console.log( 'Job failed' );
-
-		} ).on( 'failed', function ( errorMessage ) {
-			console.log( 'Job failed' );
-
-		} ).on( 'progress', function ( progress, data ) {
-			console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
-		} );
-	} );
-
-	// start the UI
-	app.use( '/queue/api', kue.app );
-	app.use( '/queue', ui.app );
-
+function gotoLink(url) {
+  response.statusCode = 302;
+  response.setHeader("Location", "/apps/" + url);
+  response.end();
 }
