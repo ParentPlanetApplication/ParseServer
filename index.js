@@ -285,6 +285,7 @@ function updatePassword( user, password ) {
 		function ( object ) {
 			console.log( 'object' );
 			console.log( object );
+      resetToken(user.id);
       gotoLink('password_reset_success');
 		},
 		function ( error ) {
