@@ -69,7 +69,7 @@ p.then( config => {
 	} );
 
 function buildApiServer( config, serverURL, staging ) {
-	var databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
+	databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
 	var appId = config.data.env.APP_ID[ mode ].staging;
 
 	var api = new ParseServer( {
@@ -278,8 +278,9 @@ function checkUser( req ) {
 }
 
 function updatePassword( user, password ) {
-	var result = user.set( 'password', password );
-	result.save( null, {
+	user.set( 'password', password );
+
+  user.save( null, {
 		useMasterKey: true
 	} ).then(
 		function ( object ) {
