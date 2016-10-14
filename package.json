@@ -23,6 +23,7 @@
     "kue-unique": "^1.0.0",
     "lodash": "^4.16.2",
     "mailgun-js": "^0.7.12",
+    "mongodb": "^2.2.10",
     "nodalytics": "^1.1.0",
     "parse": "^1.9.1",
     "parse-server": "^2.2.17",

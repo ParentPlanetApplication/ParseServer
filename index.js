@@ -7,6 +7,10 @@ var path = require( 'path' );
 var jsonFile = require( 'json-file-plus' );
 var nodalytics = require( 'nodalytics' );
 var bodyParser = require( 'body-parser' )
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
+
+var databaseURI;
 
 const commandLineArgs = require('command-line-args')
 
@@ -98,6 +102,7 @@ function buildApiServer( config, serverURL, staging ) {
 		},
 		appName: 'Parent Planet',
 		publicServerURL: serverURL.replace(/\/parse$/, ''),
+    emailVerifyTokenValidityDuration: true,
 		emailAdapter: {
 			module: 'parse-server-mandrill-adapter',
 			options: {
@@ -134,7 +139,28 @@ function setRoutes( app, api, config ) {
   } ) );
 
 	app.get( '/apps/*/request_password_reset', function ( req, res ) {
-		res.sendFile( path.join( __dirname, '/apps/choose_password.html' ) );
+    response = res;
+    var userQuery = Parse.Object.extend( "User", {}, {
+  		query: function () {
+  			return new Parse.Query( this.className );
+  		}
+  	} );
+  	var query = userQuery.query();
+  	// query.equalTo( "username", req.query.username );
+  	query.equalTo( "_perishable_token", req.query.token );
+    query.find({
+      success: function(results) {
+        if(results.length > 0) {
+          console.log('Yes, need call request reset password');
+      		res.sendFile( path.join( __dirname, '/apps/choose_password.html' ) );
+        } else {
+          gotoLink('invalid_link');
+        }
+      },
+      error: function(error) {
+        gotoLink('invalid_link');
+      }
+    });
 	} );
 
   app.post( '/apps/request_password_reset', function ( req, res ) {
@@ -265,6 +291,36 @@ function updatePassword( user, password ) {
 			console.log( error );
       gotoLink('password_reset_fail');
 		} );
+}
+
+function resetToken(id) {
+  MongoClient.connect(databaseURI, function (err, db) {
+    if (err) {
+      console.log('Unable to connect to the mongoDB server. Error:', err);
+    } else {
+      //HURRAY!! We are connected. :)
+      console.log('Connection established to', databaseURI);
+
+      // Get the documents collection
+      var collection = db.collection('_User');
+
+      collection.update(
+        {
+          _id: id
+        },
+        {
+          $set: {
+            _perishable_token: ''
+          }
+        },
+        function(result) {
+          console.log(result);
+        }
+      );
+      db.close();
+    }
+  })
+
 }
 
 function gotoLink(url) {
