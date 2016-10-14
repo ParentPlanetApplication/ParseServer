@@ -181,7 +181,7 @@ function setRoutes( app, api, config ) {
 		res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
 	} );
 
-	app.get( '/apps/*/invalid_link', function ( req, res ) {
+	app.get( '/apps/invalid_link', function ( req, res ) {
 		res.sendFile( path.join( __dirname, '/apps/invalid_link.html' ) );
 	} );
 
