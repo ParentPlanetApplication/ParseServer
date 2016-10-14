@@ -182,7 +182,7 @@ function setRoutes( app, api, config ) {
 	} );
 
 	app.get( '/apps/*/invalid_link', function ( req, res ) {
-		res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
+		res.sendFile( path.join( __dirname, '/apps/invalid_link.html' ) );
 	} );
 
 	// Serve the Parse API on the /parse URL prefix
