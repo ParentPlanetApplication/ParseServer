@@ -318,7 +318,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	var recipients = {}; //this was the organizations object, keyed by organization id, now holds 'batches' of recipients
 	var groups = {}; //holds OrganizationGroup objects with id and name keyed by id
 	//var customheading = "Update from ParentPlanet"; //string to use for heading at top of email see line#286; TODO: refactor to use org. name instead of P2
-	var footer = 'Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.'
+		var footer = 'Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color:#fff;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color: #fff;">Play Store</a>.'
 
 	function noop() {};
 
