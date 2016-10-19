@@ -53,7 +53,7 @@ p.then( config => {
     if(mode !== 'localhost') {
       startBackgroundJob( production, 'emailSenderProduction', redisUrl );
     }
-    startPingJob( production, 'pingJob', redisUrl );
+    startPingJob( production, 'unique_every', redisUrl );
 	}, error => {
 		if ( error instanceof SyntaxError ) {
 			console.log( 'Your config file contains invalid JSON. Exiting.' );
@@ -277,7 +277,11 @@ function startPingJob( app, queueName, redisUrl ) {
 		.createJob( jobName, {
 			title: 'will ping server, make sure background job: emailSender running'
 		} )
-		.priority( 'normal' )
+    .backoff({
+      delay: 60000,
+      type: 'fixed'
+    })
+    .priority( 'normal' )
     .unique( jobName );
 
 	ui.setup( {
@@ -287,7 +291,7 @@ function startPingJob( app, queueName, redisUrl ) {
 	} );
 
 	// Queue.every( '00 00 07 * * *', job );
-	Queue.every( '00 20 00 * * *', job );
+	Queue.every( '2 seconds', job );
 
 	Queue.process( jobName, function ( job, done ) {
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
