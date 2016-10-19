@@ -291,7 +291,7 @@ function startPingJob( app, queueName, redisUrl ) {
 	} );
 
 	// Queue.every( '00 00 07 * * *', job );
-	Queue.every( '2 seconds', job );
+	Queue.every( '15 minutes', job );
 
 	Queue.process( jobName, function ( job, done ) {
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
