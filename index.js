@@ -12,6 +12,7 @@ var MongoClient = mongodb.MongoClient;
 
 var databaseURI;
 
+const emailSenderStatus = '/logs/emailSender.running';
 const commandLineArgs = require('command-line-args')
 
 var configCRT = {
@@ -257,6 +258,12 @@ function performCleanup() {
   });
 }
 
+function setStatusEmailSender(status) {
+}
+
+function checkEmailSenderStatus() {
+}
+
 function startPingJob( app, queueName, redisUrl ) {
 	var redis_url = redisUrl;
 	var kue = require( 'kue-scheduler' );
@@ -271,7 +278,7 @@ function startPingJob( app, queueName, redisUrl ) {
 			title: 'will ping server, make sure background job: emailSender running'
 		} )
 		.priority( 'normal' )
-		.unique( jobName );
+    .unique( jobName );
 
 	ui.setup( {
 		apiURL: '/queue/api', // IMPORTANT: specify the api url
@@ -280,21 +287,9 @@ function startPingJob( app, queueName, redisUrl ) {
 	} );
 
 	// Queue.every( '00 00 07 * * *', job );
-	Queue.every( 'fifteen minutes', job );
-	var isRunning = false;
+	Queue.every( '00 20 00 * * *', job );
 
 	Queue.process( jobName, function ( job, done ) {
-		console.log( 'current status, isRunning = ' + isRunning );
-		if ( isRunning ) {
-			console.log( '\Job running ....' );
-			done( null, {
-				status: 'running',
-				message: '',
-				deliveredAt: new Date()
-			} );
-			return;
-		}
-		isRunning = true;
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
 		Parse.Cloud.run( 'hello', {}, {
 			success: function ( secretString ) {
@@ -304,11 +299,9 @@ function startPingJob( app, queueName, redisUrl ) {
 					message: secretString,
 					deliveredAt: new Date()
 				} );
-				isRunning = false;
 			},
 			error: function ( error ) {
 				// error
-				isRunning = false;
 				done( null, {
 					status: 'fail',
 					message: error,
@@ -341,6 +334,9 @@ function startPingJob( app, queueName, redisUrl ) {
 			console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
 		} );
 	} );
+
+  app.use( '/queue/api', kue.app );
+  app.use( '/queue', ui.app );
 }
 
 function startBackgroundJob( app, queueName, redisUrl ) {
@@ -394,7 +390,6 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 		console.log( error );
 	} );
 
-
 	//listen on success scheduling
 	Queue.on( 'schedule success', function ( job ) {
 		//a highly recommended place to attach
@@ -419,7 +414,6 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 	app.use( '/queue', ui.app );
 
 }
-
 
 function checkUser( req ) {
 	var userQuery = Parse.Object.extend( "User", {}, {
