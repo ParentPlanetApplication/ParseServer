@@ -366,20 +366,7 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 	} );
 
 	Queue.every( '00 00 00 * * *', job );
-	var isRunning = false;
-
 	Queue.process( jobName, function ( job, done ) {
-		console.log( 'current status, isRunning = ' + isRunning );
-		if ( isRunning ) {
-			console.log( '\Job running ....' );
-			done( null, {
-				status: 'running',
-				message: '',
-				deliveredAt: new Date()
-			} );
-			return;
-		}
-		isRunning = true;
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
 		Parse.Cloud.run( 'emailSender', {}, {
 			success: function ( secretString ) {
@@ -389,11 +376,9 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 					message: secretString,
 					deliveredAt: new Date()
 				} );
-				isRunning = false;
 			},
 			error: function ( error ) {
 				// error
-				isRunning = false;
 				done( null, {
 					status: 'fail',
 					message: error,
