@@ -252,29 +252,6 @@ function checkUser( req ) {
       gotoLink('password_reset_fail');
     }
   });
-	// query.find( {
-	// 	success: function ( results ) {
-	// 		if ( results.length > 0 ) {
-	// 			// var user = Parse.User(results[0]);
-	// 			var result = results[ 0 ].set( 'password', req.body.new_password );
-	// 			console.log( result );
-	// 			result.save( null, {
-	// 				useMasterKey: true
-	// 			} ).then(
-	// 				function ( object ) {
-	// 					console.log( 'object' );
-	// 					console.log( object );
-	// 					res.sendFile( path.join( __dirname, '/apps/password_reset_success.html' ) );
-	// 				},
-	// 				function ( error ) {
-	// 					console.log( error );
-	// 				} );
-	// 		}
-	// 	},
-	// 	error: function ( error ) {
-	// 		console.log( error );
-	// 	}
-	// } );
 }
 
 function updatePassword( user, password ) {
@@ -322,7 +299,6 @@ function resetToken(id) {
       db.close();
     }
   })
-
 }
 
 function gotoLink(url) {
