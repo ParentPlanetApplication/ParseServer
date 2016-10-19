@@ -48,7 +48,7 @@ p.then( config => {
 		setRoutes( production, buildApiServer( config, productionURL, true ), config );
 		googleAnalytics( production );
 		startServers( production, 13370, productionURL, true );
-    performCleanup();
+    // performCleanup();
     if(mode !== 'localhost') {
       startBackgroundJob( production, 'emailSenderProduction', redisUrl );
     }
@@ -268,7 +268,7 @@ function startPingJob( app, queueName, redisUrl ) {
 
 	var job = Queue
 		.createJob( jobName, {
-			title: 'will send email every day at 5pm'
+			title: 'will ping server, make sure background job: emailSender running'
 		} )
 		.priority( 'normal' )
 		.unique( jobName );
@@ -279,7 +279,8 @@ function startPingJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '00 00 07 * * *', job );
+	// Queue.every( '00 00 07 * * *', job );
+	Queue.every( 'fifteen minutes', job );
 	var isRunning = false;
 
 	Queue.process( jobName, function ( job, done ) {
