@@ -446,7 +446,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				suffix();
 			} //eo event
-      function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+           function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
 				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
 				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
@@ -461,10 +461,10 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					styling += 'padding-bottom: 1.5em; ';
 				}
 				prefix( styling );
-        console.log(JSON.stringify(d));
+           console.log(JSON.stringify(d));
 				add( null, d.title, titleStyle );
 				add( 'Created By', d.groupName );
-        add( 'Cancel By', d.groupName);
+           add( 'Cancel By', d.groupName);
 				add( 'When', _when );
 				add( 'Where', d.location );
 				add( 'Notes', d.note )
@@ -597,11 +597,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		//results.reverse //sort
 		function emailFound( results ) {
 			var n = 0;
+			
+			SortByStartDate(results);
+			
 			results.forEach( function ( o, i ) { // b) loop through the ‘rows’ of the emails
 				// c) for each item we pull/read the organisation id, then
 				n++;
 				id = o.get( "organizationId" );
 				data = o.get( "data" );
+			
 				groupName = o.get( "groupId" );
 				groupName = groupName && groups[ groupName ] && groups[ groupName ].groupName ? groups[ groupName ].groupName : o.get( "customListName" );
 				if ( !id ) {
@@ -630,18 +634,59 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 						recipient[ type ] = [];
 					}
 					data.groupName = groupName;
+					
 					recipient[ type ].push( data );
 				} ); //eo loop over each email address
 				//success(JSON.stringify(batch));
+				
 				for ( recipient in batch ) {
 					++n;
 					var _html;
+				
 					_html = getHtml( batch[ recipient ] );
 					// success('\n\n', _html);
 					batch[ recipient ].html = _html;
 					//    success('120 '+JSON.stringify(batch[recipient]));
 				} //eo loop over recipient in batch
 			} ); //eo results.forEach
+			//Order results
+				function SortByStartDate(results){     
+						results.sort(function (a, b) {  
+								var aType = a.get("type");	
+								var bType = b.get("type");	
+								var data1 = a.get( "data" ); 
+								var data2 = b.get( "data" );   
+								var dateBegin;
+								if(aType=="homework") {
+									dateBegin = data1.assigned;
+								}else{
+									dateBegin = data1.start;
+								};
+								var dateEnd;
+								if(bType=="homework") {
+									dateEnd = data2.assigned;
+								}else{
+									dateEnd = data2.start;
+								};
+								 
+								
+								
+								var date1 = new Date(dateBegin);   
+								var date2 = new Date(dateEnd); 
+								              
+								if(date1 < date2){ 
+									return 1
+								};    
+								if(date1 > date2) {
+									return -1
+								};  
+								
+								
+								return 0; 
+							});    
+		 	}
+				
+				
 			success( '#467 have resolved emailCreate promise, with total emails:' + n );
 			promise.resolve(); //resolve the promise to go to the next step
 		};
@@ -684,7 +729,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		} ); //find all the organisations
 		return promise; //return promise, when resolved to to next step
 	} //eo getOrganizations
+
 	function sendEmails( results ) { //with the emails array pass along to mandrill and send out
+		
 		var _promise = new Parse.Promise(); //do everything async using promises, this is the top-level promise which is resolved only after we finish sending out all batches
 		var ids = Object.keys( organizations ); //object Ids for the organisations we are working with
 		var last = ids.length; //keep track of how many recursions to do
@@ -695,6 +742,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			var id = ids[ index ]; //the specific id for this batch
 			var organization = organizations[ id ]; //which organization to use
 			var batch = recipients[ id ]; //which set of emails to work with
+			//console.log(JSON.stringify(batch));
+			
 			//
 			var o = null;
 			var merge_vars = [];
@@ -769,6 +818,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		function send( promise ) { //here is where an email is sent out from Mandrill using the passed in data
 			var body = null;
 			try {
+				
 				body = getBody();
 				//success('149 '+JSON.stringify(body));
 			} catch ( err ) {
@@ -963,6 +1013,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		}
 	}; //eo done
 	/*
+
+
+
 	 * this is the main function(s) of emailSender to be called as a serial chain of promises
 	 * batchSender() is call after a successful 'count' query
 	 * if error, then job never starts!
@@ -972,15 +1025,23 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	 * set 'total' only after a successful count query!
 	 * decide what to do in done()
 	 */
+	
+	
 	function batchSender() {
 		var Email = Parse.Object.extend( "Email" ); //actually could use Email declared at top scope :)
 		var query = new Parse.Query( Email ); //ditto, but do it here and then clean up later by removing top scope vars
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );
 		success( '                  #772 Main Driver batchSender() with skip:' + skip + ' use .each instead!' );
+		
 		//    query.find({success: start, error: error}) //find all the emails to be sent, timestamp it and go to next link
+		success( '                  #Start-Queryyyyyyyyyyy' );
+		
+
+		success( '                  #End-Queryyyyyyyyyyy' );
 		query.each( function ( email ) {
 				resultsArray = resultsArray ? resultsArray : [];
+				
 				resultsArray.push( email );
 				//checkData('batchSender', email.data);
 			}, {
