@@ -642,6 +642,44 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					//    success('120 '+JSON.stringify(batch[recipient]));
 				} //eo loop over recipient in batch
 			} ); //eo results.forEach
+			//Order results
+				function SortByStartDate(results){
+						results.sort(function (a, b) {
+								var aType = a.get("type");
+								var bType = b.get("type");
+								var data1 = a.get( "data" );
+								var data2 = b.get( "data" );
+								var dateBegin;
+								if(aType=="homework") {
+									dateBegin = data1.assigned;
+								}else{
+									dateBegin = data1.start;
+								};
+								var dateEnd;
+								if(bType=="homework") {
+									dateEnd = data2.assigned;
+								}else{
+									dateEnd = data2.start;
+								};
+
+
+
+								var date1 = new Date(dateBegin);
+								var date2 = new Date(dateEnd);
+
+								if(date1 < date2){
+									return -1;
+								};
+								if(date1 > date2) {
+									return 1
+								};
+
+
+								return 0;
+							});
+		 	}
+
+
 			success( '#467 have resolved emailCreate promise, with total emails:' + n );
 			promise.resolve(); //resolve the promise to go to the next step
 		};
