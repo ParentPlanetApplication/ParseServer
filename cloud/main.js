@@ -675,10 +675,10 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 								var date2 = new Date(dateEnd); 
 								              
 								if(date1 < date2){ 
-									return 1
+									return -1;
 								};    
 								if(date1 > date2) {
-									return -1
+									return 1
 								};  
 								
 								
