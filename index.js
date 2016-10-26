@@ -78,7 +78,11 @@ p.then( config => {
 
 function buildApiServer( config, serverURL, production ) {
 	databaseURI = config.data.env.DATABASEURI[ 'aws' ].production;
-	// databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
+  if (mode === 'localhost') {
+    databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
+  }
+
+  console.log(databaseURI);
 
 	appId = config.data.env.APP_ID[ mode ].production;
 
@@ -416,7 +420,6 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 	// start the UI
 	app.use( '/queue/api', kue.app );
 	app.use( '/queue', ui.app );
-
 }
 
 function checkUser( req ) {

@@ -57,7 +57,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		} else {
 			add( [ d.senderName, 'from', d.organizationName, 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
 		}
-		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the Apple App Store and Google Play Store directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
+		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a>.Directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
 		add( [ 'Password:', d.password ], true );
 		add( [ 'We recommend you update your password by clicking on the Reset Password button on the login screen of the app or website.<br/>' ] );
@@ -68,7 +68,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		return html;
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
-		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.</div>';
+		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color: white;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color:white;">Play Store</a>.</div>';
 		// success('123:' + index + organization + batch + id);
 		var o = null;
 		var merge_vars = [];
@@ -199,7 +199,7 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 		gray();
 		prefix();
 		add( [ d.senderName, 'from', d.organizationName, 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
-    add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
+    add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
 		add( [ 'Password:', d.password ], true );
 		add( [ 'We recommend you update your password by clicking on the Reset Password button on the login screen of the app or website.<br/>' ] );
@@ -210,7 +210,7 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 		return html;
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
-		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.</div>';
+		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.</div>';
 		// success('123:' + index + organization + batch + id);
 		var o = null;
 		var merge_vars = [];
@@ -597,11 +597,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		//results.reverse //sort
 		function emailFound( results ) {
 			var n = 0;
+
+			SortByStartDate(results);
+
 			results.forEach( function ( o, i ) { // b) loop through the ‘rows’ of the emails
 				// c) for each item we pull/read the organisation id, then
 				n++;
 				id = o.get( "organizationId" );
 				data = o.get( "data" );
+
 				groupName = o.get( "groupId" );
 				groupName = groupName && groups[ groupName ] && groups[ groupName ].groupName ? groups[ groupName ].groupName : o.get( "customListName" );
 				if ( !id ) {
@@ -630,12 +634,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 						recipient[ type ] = [];
 					}
 					data.groupName = groupName;
+
 					recipient[ type ].push( data );
 				} ); //eo loop over each email address
 				//success(JSON.stringify(batch));
+
 				for ( recipient in batch ) {
 					++n;
 					var _html;
+
 					_html = getHtml( batch[ recipient ] );
 					// success('\n\n', _html);
 					batch[ recipient ].html = _html;
@@ -722,7 +729,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		} ); //find all the organisations
 		return promise; //return promise, when resolved to to next step
 	} //eo getOrganizations
+
 	function sendEmails( results ) { //with the emails array pass along to mandrill and send out
+
 		var _promise = new Parse.Promise(); //do everything async using promises, this is the top-level promise which is resolved only after we finish sending out all batches
 		var ids = Object.keys( organizations ); //object Ids for the organisations we are working with
 		var last = ids.length; //keep track of how many recursions to do
@@ -733,6 +742,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			var id = ids[ index ]; //the specific id for this batch
 			var organization = organizations[ id ]; //which organization to use
 			var batch = recipients[ id ]; //which set of emails to work with
+			//console.log(JSON.stringify(batch));
+
 			//
 			var o = null;
 			var merge_vars = [];
@@ -807,6 +818,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		function send( promise ) { //here is where an email is sent out from Mandrill using the passed in data
 			var body = null;
 			try {
+
 				body = getBody();
 				//success('149 '+JSON.stringify(body));
 			} catch ( err ) {
@@ -1001,6 +1013,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		}
 	}; //eo done
 	/*
+
+
+
 	 * this is the main function(s) of emailSender to be called as a serial chain of promises
 	 * batchSender() is call after a successful 'count' query
 	 * if error, then job never starts!
@@ -1010,15 +1025,23 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	 * set 'total' only after a successful count query!
 	 * decide what to do in done()
 	 */
+
+
 	function batchSender() {
 		var Email = Parse.Object.extend( "Email" ); //actually could use Email declared at top scope :)
 		var query = new Parse.Query( Email ); //ditto, but do it here and then clean up later by removing top scope vars
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );
 		success( '                  #772 Main Driver batchSender() with skip:' + skip + ' use .each instead!' );
+
 		//    query.find({success: start, error: error}) //find all the emails to be sent, timestamp it and go to next link
+		success( '                  #Start-Queryyyyyyyyyyy' );
+
+
+		success( '                  #End-Queryyyyyyyyyyy' );
 		query.each( function ( email ) {
 				resultsArray = resultsArray ? resultsArray : [];
+
 				resultsArray.push( email );
 				//checkData('batchSender', email.data);
 			}, {
@@ -1328,14 +1351,18 @@ Parse.Cloud.define( "modifyUser", function ( request, response ) {
 Parse.Cloud.beforeSave(Parse.User, function(request, response) {
   var user = request.object;
   var name = user.get('username');
+
   console.log('Before SAVE');
     console.log("name:"+name);
+
     response.success();
 });
+
 // log the after-save too, to confirm it was saved
 Parse.Cloud.afterSave(Parse.User, function(request, response) {
     var user = request.object;
       var name = user.get('username');
+
   console.log('After SAVE');
     console.log("name:"+name);
 });
