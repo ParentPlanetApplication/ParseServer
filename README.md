@@ -1,5 +1,4 @@
 # parse-server
-# an private version for ParentPlanet
 
 project using the [parse-server](https://github.com/ParsePlatform/parse-server) module on Express.
 
