@@ -57,7 +57,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		} else {
 			add( [ d.senderName, 'from', d.organizationName, 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
 		}
-		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a>.Directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
+		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
 		add( [ 'Password:', d.password ], true );
 		add( [ 'We recommend you update your password by clicking on the Reset Password button on the login screen of the app or website.<br/>' ] );
@@ -597,15 +597,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		//results.reverse //sort
 		function emailFound( results ) {
 			var n = 0;
-			
+
 			SortByStartDate(results);
-			
+
 			results.forEach( function ( o, i ) { // b) loop through the ‘rows’ of the emails
 				// c) for each item we pull/read the organisation id, then
 				n++;
 				id = o.get( "organizationId" );
 				data = o.get( "data" );
-			
+
 				groupName = o.get( "groupId" );
 				groupName = groupName && groups[ groupName ] && groups[ groupName ].groupName ? groups[ groupName ].groupName : o.get( "customListName" );
 				if ( !id ) {
@@ -634,15 +634,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 						recipient[ type ] = [];
 					}
 					data.groupName = groupName;
-					
+
 					recipient[ type ].push( data );
 				} ); //eo loop over each email address
 				//success(JSON.stringify(batch));
-				
+
 				for ( recipient in batch ) {
 					++n;
 					var _html;
-				
+
 					_html = getHtml( batch[ recipient ] );
 					// success('\n\n', _html);
 					batch[ recipient ].html = _html;
@@ -650,12 +650,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				} //eo loop over recipient in batch
 			} ); //eo results.forEach
 			//Order results
-				function SortByStartDate(results){     
-						results.sort(function (a, b) {  
-								var aType = a.get("type");	
-								var bType = b.get("type");	
-								var data1 = a.get( "data" ); 
-								var data2 = b.get( "data" );   
+				function SortByStartDate(results){
+						results.sort(function (a, b) {
+								var aType = a.get("type");
+								var bType = b.get("type");
+								var data1 = a.get( "data" );
+								var data2 = b.get( "data" );
 								var dateBegin;
 								if(aType=="homework") {
 									dateBegin = data1.assigned;
@@ -668,25 +668,25 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 								}else{
 									dateEnd = data2.start;
 								};
-								 
-								
-								
-								var date1 = new Date(dateBegin);   
-								var date2 = new Date(dateEnd); 
-								              
-								if(date1 < date2){ 
+
+
+
+								var date1 = new Date(dateBegin);
+								var date2 = new Date(dateEnd);
+
+								if(date1 < date2){
 									return -1;
-								};    
+								};
 								if(date1 > date2) {
 									return 1
-								};  
-								
-								
-								return 0; 
-							});    
+								};
+
+
+								return 0;
+							});
 		 	}
-				
-				
+
+
 			success( '#467 have resolved emailCreate promise, with total emails:' + n );
 			promise.resolve(); //resolve the promise to go to the next step
 		};
@@ -731,7 +731,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	} //eo getOrganizations
 
 	function sendEmails( results ) { //with the emails array pass along to mandrill and send out
-		
+
 		var _promise = new Parse.Promise(); //do everything async using promises, this is the top-level promise which is resolved only after we finish sending out all batches
 		var ids = Object.keys( organizations ); //object Ids for the organisations we are working with
 		var last = ids.length; //keep track of how many recursions to do
@@ -743,7 +743,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			var organization = organizations[ id ]; //which organization to use
 			var batch = recipients[ id ]; //which set of emails to work with
 			//console.log(JSON.stringify(batch));
-			
+
 			//
 			var o = null;
 			var merge_vars = [];
@@ -818,7 +818,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		function send( promise ) { //here is where an email is sent out from Mandrill using the passed in data
 			var body = null;
 			try {
-				
+
 				body = getBody();
 				//success('149 '+JSON.stringify(body));
 			} catch ( err ) {
@@ -1025,23 +1025,23 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	 * set 'total' only after a successful count query!
 	 * decide what to do in done()
 	 */
-	
-	
+
+
 	function batchSender() {
 		var Email = Parse.Object.extend( "Email" ); //actually could use Email declared at top scope :)
 		var query = new Parse.Query( Email ); //ditto, but do it here and then clean up later by removing top scope vars
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );
 		success( '                  #772 Main Driver batchSender() with skip:' + skip + ' use .each instead!' );
-		
+
 		//    query.find({success: start, error: error}) //find all the emails to be sent, timestamp it and go to next link
 		success( '                  #Start-Queryyyyyyyyyyy' );
-		
+
 
 		success( '                  #End-Queryyyyyyyyyyy' );
 		query.each( function ( email ) {
 				resultsArray = resultsArray ? resultsArray : [];
-				
+
 				resultsArray.push( email );
 				//checkData('batchSender', email.data);
 			}, {
