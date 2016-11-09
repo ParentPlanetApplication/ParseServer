@@ -369,7 +369,8 @@ function startBackgroundJob( app, queueName, redisUrl ) {
 		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
 	} );
 
-	Queue.every( '00 00 00 * * *', job );
+  // Queue.every( '00 00 00 * * *', job );
+	Queue.every( '00 00 01 * * *', job );
 	Queue.process( jobName, function ( job, done ) {
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
 		Parse.Cloud.run( 'emailSender', {}, {
