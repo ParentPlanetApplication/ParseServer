@@ -69,7 +69,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
 		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color: white;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color:white;">Play Store</a>.'
-		+'<p>If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
+		+'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
 		+'</div>';
 		
 		// success('123:' + index + organization + batch + id);
@@ -214,7 +214,7 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
 		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.'
-		+'<p>If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
+		+'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
 		+'</div>';
 		// success('123:' + index + organization + batch + id);
 		var o = null;
@@ -324,7 +324,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	var groups = {}; //holds OrganizationGroup objects with id and name keyed by id
 	//var customheading = "Update from ParentPlanet"; //string to use for heading at top of email see line#286; TODO: refactor to use org. name instead of P2
 		var footer = 'Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color:#fff;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color: #fff;">Play Store</a>.';
-		footer += '<p>If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>';
+		footer += '<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>';
 
 	function noop() {};
 
