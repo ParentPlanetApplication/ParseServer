@@ -71,7 +71,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color: white;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color:white;">Play Store</a>.'
 		+'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
 		+'</div>';
-		
+
 		// success('123:' + index + organization + batch + id);
 		var o = null;
 		var merge_vars = [];
@@ -421,9 +421,13 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					styling += 'padding-bottom: 1.5em; ';
 				}
 				prefix( styling );
-				add( null, d.title, titleStyle );
-				add( 'From', d.groupName );
-				add( 'Notes', d.message );
+				var unescapeTitle = unescape(d.title);
+				add( null, unescapeTitle, titleStyle );
+				var unescapeGroupName = unescape(d.groupName);
+				add( 'From', unescapeGroupName );
+				var unescapeMessage = unescape(d.message);
+				add( 'Notes', unescapeMessage );
+
 				suffix();
 			} //eo message
 			function event() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
@@ -442,17 +446,20 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
 				add( null, d.title, titleStyle );
-				add( 'Created By', d.groupName );
+				var unescapeGroupName = unescape(d.groupName);
+				add( 'Created By', unescapeGroupName);
 				add( 'When', _when );
+				var unescapeLocation = unescape(d.location);
 				add( 'Where', d.location );
-				add( 'Notes', d.note )
+				var unescapeNote = unescape(d.note);
+				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
 					add( 'Repeats', _repeat );
 				}
 				suffix();
 			} //eo event
-           function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+       function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
 				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
 				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
@@ -468,12 +475,16 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
            console.log(JSON.stringify(d));
-				add( null, d.title, titleStyle );
-				add( 'Created By', d.groupName );
-           add( 'Cancel By', d.groupName);
+					 var unescapeTitile = unescape(d.title);
+				add( null, unescapeTitile, titleStyle );
+				var unescapeGroupName = unescape(d.groupName);
+				add( 'Created By', unescapeGroupName );
+           add( 'Cancel By',unescapeGroupName);
 				add( 'When', _when );
-				add( 'Where', d.location );
-				add( 'Notes', d.note )
+				var unescapeLocation = unescape(d.location);
+				add( 'Where', unescapeLocation);
+				var unescapeNote = unescape(d.note);
+				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
 					add( 'Repeats', _repeat );
@@ -496,12 +507,16 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
         console.log(JSON.stringify(d));
-				add( null, d.title, titleStyle );
-				add( 'Created By', d.groupName );
-        add( 'Edit By', d.groupName);
+				var unescapeTitle = unescape(d.title);
+				add( null, unescapeTitle, titleStyle );
+					var unescapeGroupName = unescape(d.groupName);
+				add( 'Created By', unescapeGroupName );
+        add( 'Edit By', unescapeGroupName);
 				add( 'When', _when );
-				add( 'Where', d.location );
-				add( 'Notes', d.note )
+					var unescapeLocation = unescape(d.location);
+				add( 'Where', unescapeLocation );
+				var unescapeNote = unescape(d.note);
+				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
 					add( 'Repeats', _repeat );
@@ -517,10 +532,13 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				var _due = d.due ? moment( d.due ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				prefix( styling );
-				add( null, d.title, titleStyle );
-				add( 'From', d.groupName );
+				var unescapeTitle = unescape(d.title);
+				add( null, unescapeTitle, titleStyle );
+				var unescapeGroupName = unescape(d.groupName);
+				add( 'From', unescapeGroupName);
 				add( 'Due', _due );
-				add( 'Notes', d.note );
+				var unescapeNote = unescape(d.note);
+				add( 'Notes', unescapeNote );
 				suffix();
 			} //eo homework
 			d.even = even();
