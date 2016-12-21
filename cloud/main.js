@@ -367,7 +367,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		function even() {
 			return i % 2 === 0;
 		} //eo even
-		function add( label, prop, style ) { //add inline styling or none if param undefined
+		function add( label, prop, style ) { //add inline styli    ng or none if param undefined
 			if ( !prop || prop == "Never" ) {
 				return;
 			}
@@ -479,7 +479,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				add( null, unescapeTitile, titleStyle );
 				var unescapeGroupName = unescape(d.groupName);
 				add( 'Created By', unescapeGroupName );
-           add( 'Cancel By',unescapeGroupName);
+        add( 'Cancel By',unescapeGroupName);
 				add( 'When', _when );
 				var unescapeLocation = unescape(d.location);
 				add( 'Where', unescapeLocation);
@@ -776,6 +776,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			for ( var p in batch ) {
 				var addr = batch[ p ][ "attr" ][ "addr" ];
 				var html = batch[ p ][ "html" ];
+				var unescapeOrgName = unescape(organization.name);
 				var custom = {
 					"rcpt": addr,
 					"vars": [
@@ -785,7 +786,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 						},
 						{
 							"name": "customheading",
-							"content": "<b>Update from " + organization.name + "</b>"
+							"content": "<b>Update from " + unescapeOrgName + "</b>"
 						}, //TODO: refactor to use: Update from OrganizationName instead of default    },
 						{
 							"name": "footer",
@@ -811,9 +812,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
                 ],
 					"message": {
 						"html": html,
-						"subject": organization.name + " Update",
+						"subject": unescapeOrgName + " Update",
 						"from_email": "no-reply@parentplanet.com",
-						"from_name": organization.name,
+						"from_name": unescapeOrgName,
 						"to": _to,
 						"headers": {
 							"Reply-To": "no-reply@parentplanet.com"
