@@ -374,6 +374,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			label = label ? label + ': ' : ''; //if missing then do not add a string
 			prop = prop ? prop : ''; //if missing do not add anything
 			style = style ? 'style="' + style + ' " ' : 'style="padding-bottom: 0.375em"'; //inline styling
+			label = unescape(label).replace(/\</,'\\<').replace(/\/>/,'\\/\\>');
+
 			html += '<div ' + style + '>' + '<i>' + label + '</i>' + prop + '</div>';
 		} //eo add (to html)
 		function prefix( style ) { //open the block wrapper, add inline styling or empty string if param undefined
@@ -421,11 +423,11 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					styling += 'padding-bottom: 1.5em; ';
 				}
 				prefix( styling );
-				var unescapeTitle = unescape(d.title);
+				var unescapeTitle = d.title;
 				add( null, unescapeTitle, titleStyle );
-				var unescapeGroupName = unescape(d.groupName);
+				var unescapeGroupName = d.groupName;
 				add( 'From', unescapeGroupName );
-				var unescapeMessage = unescape(d.message);
+				var unescapeMessage = d.message;
 				add( 'Notes', unescapeMessage );
 
 				suffix();
@@ -446,12 +448,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
 				add( null, d.title, titleStyle );
-				var unescapeGroupName = unescape(d.groupName);
+				var unescapeGroupName = d.groupName;
 				add( 'Created By', unescapeGroupName);
 				add( 'When', _when );
-				var unescapeLocation = unescape(d.location);
+				var unescapeLocation = d.location;
 				add( 'Where', d.location );
-				var unescapeNote = unescape(d.note);
+				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
@@ -475,15 +477,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
            console.log(JSON.stringify(d));
-					 var unescapeTitile = unescape(d.title);
+					 var unescapeTitile = d.title;
 				add( null, unescapeTitile, titleStyle );
-				var unescapeGroupName = unescape(d.groupName);
+				var unescapeGroupName = d.groupName;
 				add( 'Created By', unescapeGroupName );
         add( 'Cancel By',unescapeGroupName);
 				add( 'When', _when );
-				var unescapeLocation = unescape(d.location);
+				var unescapeLocation = d.location;
 				add( 'Where', unescapeLocation);
-				var unescapeNote = unescape(d.note);
+				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
@@ -507,15 +509,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				prefix( styling );
         console.log(JSON.stringify(d));
-				var unescapeTitle = unescape(d.title);
+				var unescapeTitle = d.title;
 				add( null, unescapeTitle, titleStyle );
-					var unescapeGroupName = unescape(d.groupName);
+					var unescapeGroupName = d.groupName;
 				add( 'Created By', unescapeGroupName );
         add( 'Edit By', unescapeGroupName);
 				add( 'When', _when );
-					var unescapeLocation = unescape(d.location);
+					var unescapeLocation = d.location;
 				add( 'Where', unescapeLocation );
-				var unescapeNote = unescape(d.note);
+				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
 				if ( isRepeating && _repeat ) {
@@ -532,12 +534,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				var _due = d.due ? moment( d.due ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				prefix( styling );
-				var unescapeTitle = unescape(d.title);
+				var unescapeTitle = d.title;
 				add( null, unescapeTitle, titleStyle );
-				var unescapeGroupName = unescape(d.groupName);
+				var unescapeGroupName = d.groupName;
 				add( 'From', unescapeGroupName);
 				add( 'Due', _due );
-				var unescapeNote = unescape(d.note);
+				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote );
 				suffix();
 			} //eo homework
@@ -1024,14 +1026,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		total = parseInt( total );
 		var listEmail = '';
 		if(resultsArray.length > 0){
-			for (var i = 0; i < resultsArray.length; i++) {
+			/*for (var i = 0; i < resultsArray.length; i++) {
 				var email = resultsArray[i];
-				listEmail = listEmail+=(email +",");
+				listEmail+=(email +",");
 			}
-			listEmail.substring(1, listEmail.length-1);
+			listEmail.substring(1, listEmail.length-1);*/
+			listEmail = JSON.stringify(resultsArray);
 		}
 		msg = msg ? msg : '';
-		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' listEmail=' + listEmail;
+		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
 
 		success( msg );
 		success( '****************************************************************************************' );
