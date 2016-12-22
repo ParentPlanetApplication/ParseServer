@@ -1022,8 +1022,17 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		date = date.toString();
 		skip = parseInt( skip );
 		total = parseInt( total );
+		var listEmail = '';
+		if(resultsArray.length > 0){
+			for (var i = 0; i < resultsArray.length; i++) {
+				var email = resultsArray[i];
+				listEmail = listEmail+=(email +",");
+			}
+			listEmail.substring(1, listEmail.length-1);
+		}
 		msg = msg ? msg : '';
-		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total;
+		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' listEmail=' + listEmail;
+
 		success( msg );
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );

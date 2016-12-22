@@ -12,6 +12,7 @@ var MongoClient = mongodb.MongoClient;
 
 var databaseURI;
 
+const emailSenderStatus = '/logs/emailSender.running';
 const commandLineArgs = require('command-line-args')
 
 var configCRT = {
@@ -229,6 +230,184 @@ function startServers( app, port, serverURL, staging ) {
 
 	// This will enable the Live Query real-time server
 	ParseServer.createLiveQueryServer( httpServer );
+}
+
+function performCleanup() {
+  var kue = require('kue');
+  var ki = new kue;
+
+  ki.complete(function(err, ids) {
+    if (!ids) return;
+    ids.forEach(function(id, index) {
+      kue.Job.get(id, function(err, job) {
+        if (job) {
+          job.remove(function(){
+          });
+        }
+      });
+    });
+  });
+}
+
+function setStatusEmailSender(status) {
+}
+
+function checkEmailSenderStatus() {
+}
+
+function startPingJob( app, queueName, redisUrl ) {
+	var redis_url = redisUrl;
+	var kue = require( 'kue-scheduler' );
+	var url = require( 'url' );
+
+	var ui = require( 'kue-ui' );
+	var Queue = kue.createQueue();
+	var jobName = queueName;
+
+	var job = Queue
+		.createJob( jobName, {
+			title: 'will ping server, make sure background job: emailSender running'
+		} )
+    .backoff({
+      delay: 60000,
+      type: 'fixed'
+    })
+    .priority( 'normal' )
+    .unique( jobName );
+
+	ui.setup( {
+		apiURL: '/queue/api', // IMPORTANT: specify the api url
+		baseURL: '/queue', // IMPORTANT: specify the base url
+		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
+	} );
+
+	// Queue.every( '00 00 07 * * *', job );
+	Queue.every( '15 minutes', job );
+
+	Queue.process( jobName, function ( job, done ) {
+		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
+		Parse.Cloud.run( 'hello', {}, {
+			success: function ( secretString ) {
+				// obtained secret string
+				done( null, {
+					status: 'Status:successfully',
+					message: secretString,
+					deliveredAt: new Date()
+				} );
+			},
+			error: function ( error ) {
+				// error
+				done( null, {
+					status: 'fail',
+					message: error,
+					deliveredAt: new Date()
+				} );
+			}
+		} );
+	} );
+
+	//listen on scheduler errors
+	Queue.on( 'schedule error', function ( error ) {
+		//handle all scheduling errors here
+		console.log( error );
+	} );
+
+
+	//listen on success scheduling
+	Queue.on( 'schedule success', function ( job ) {
+
+		job.on( 'complete', function ( result ) {
+			console.log( 'Job completed with data ', result );
+
+		} ).on( 'failed attempt', function ( errorMessage, doneAttempts ) {
+			console.log( 'Job failed' );
+
+		} ).on( 'failed', function ( errorMessage ) {
+			console.log( 'Job failed' );
+
+		} ).on( 'progress', function ( progress, data ) {
+			console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
+		} );
+	} );
+
+  app.use( '/queue/api', kue.app );
+  app.use( '/queue', ui.app );
+}
+
+function startBackgroundJob( app, queueName, redisUrl ) {
+	var redis_url = redisUrl;
+	var kue = require( 'kue-scheduler' );
+	var url = require( 'url' );
+
+	var ui = require( 'kue-ui' );
+	var Queue = kue.createQueue();
+	var jobName = queueName;
+
+	var job = Queue
+		.createJob( jobName, {
+			title: 'send email from table Email'
+		} )
+    .priority( 'normal' )
+		.unique( jobName );
+
+	ui.setup( {
+		apiURL: '/queue/api', // IMPORTANT: specify the api url
+		baseURL: '/queue', // IMPORTANT: specify the base url
+		updateInterval: 5000 // Optional: Fetches new data every 5000 ms
+	} );
+
+	Queue.every( '00 00 00 * * *', job );
+	Queue.process( jobName, function ( job, done ) {
+		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
+		Parse.Cloud.run( 'emailSender', {}, {
+			success: function ( secretString,results ) {
+				// obtained secret string
+				done( null, {
+					status: 'Successfully',
+					senders: results,
+					message: secretString,
+					deliveredAt: new Date()
+				} );
+			},
+			error: function ( error ) {
+				// error
+				done( null, {
+					status: 'fail',
+					message: error,
+					deliveredAt: new Date()
+				} );
+			}
+		} );
+	} );
+
+	//listen on scheduler errors
+	Queue.on( 'schedule error', function ( error ) {
+		//handle all scheduling errors here
+		console.log( error );
+	} );
+
+	//listen on success scheduling
+	Queue.on( 'schedule success', function ( job ) {
+		//a highly recommended place to attach
+		//job instance level events listeners
+
+		job.on( 'complete', function ( result ) {
+			console.log( 'Job completed with data ', result );
+
+		} ).on( 'failed attempt', function ( errorMessage, doneAttempts ) {
+			console.log( 'Job failed' );
+
+		} ).on( 'failed', function ( errorMessage ) {
+			console.log( 'Job failed' );
+
+		} ).on( 'progress', function ( progress, data ) {
+			console.log( '\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
+		} );
+	} );
+
+	// start the UI
+	app.use( '/queue/api', kue.app );
+	app.use( '/queue', ui.app );
 }
 
 function checkUser( req ) {
