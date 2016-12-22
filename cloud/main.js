@@ -374,7 +374,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			label = label ? label + ': ' : ''; //if missing then do not add a string
 			prop = prop ? prop : ''; //if missing do not add anything
 			style = style ? 'style="' + style + ' " ' : 'style="padding-bottom: 0.375em"'; //inline styling
-			label = unescape(label).replace(/\</,'\\<').replace(/\/>/,'\\/\\>');
+			prop = unescape(prop).replace(/\</,'\\<').replace(/\/>/,'\\/\\>');
 
 			html += '<div ' + style + '>' + '<i>' + label + '</i>' + prop + '</div>';
 		} //eo add (to html)
