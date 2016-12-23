@@ -300,7 +300,7 @@ function startPingJob( app, queueName, redisUrl ) {
 				done( null, {
 					status: 'Status:successfully',
 					senders : returnObjec,
-					message: message,
+					message: secretString,
 					deliveredAt: new Date()
 				} );
 			},
