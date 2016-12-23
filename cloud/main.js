@@ -1025,7 +1025,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		skip = parseInt( skip );
 		total = parseInt( total );
 		var listEmail = '';
-		var emailArray=[];
+		var emailArray= [];
 		if(resultsArray.length > 0){
 			for (var i = 0; i < resultsArray.length; i++) {
 				var obj = resultsArray[i];
@@ -1040,6 +1040,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			}
 
 			listEmail = JSON.stringify(emailArray);
+			succes("List Email:" + listEmail);
 		}
 		msg = msg ? msg : '';
 		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
