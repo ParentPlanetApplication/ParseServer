@@ -295,8 +295,8 @@ function startPingJob( app, queueName, redisUrl ) {
 				/*if(secretString!=undefined){
 					json_str  = secretString.result.match(/(listEmail\=.*)/)[0].replace(/(listEmail\=)/, '').replace(/\"$/, '');
 					returnObjec = JSON.parse(json_str);
-				}
-				var message = secretString.result.replace(/\,listEmail.*/, '');*/
+				}*/
+				//var message = secretString.result.replace(/\,listEmail.*/, '')
 				done( null, {
 					status: 'Status:successfully',
 					senders : returnObjec,
