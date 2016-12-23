@@ -1026,6 +1026,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		total = parseInt( total );
 		var listEmail = '';
 		var emailArray= [];
+		success(resultsArray);
 		if(resultsArray.length > 0){
 			for (var i = 0; i < resultsArray.length; i++) {
 				var obj = resultsArray[i];
