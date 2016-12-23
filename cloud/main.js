@@ -1025,13 +1025,21 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		skip = parseInt( skip );
 		total = parseInt( total );
 		var listEmail = '';
+		var emailArray=[];
 		if(resultsArray.length > 0){
-			/*for (var i = 0; i < resultsArray.length; i++) {
-				var email = resultsArray[i];
-				listEmail+=(email +",");
+			for (var i = 0; i < resultsArray.length; i++) {
+				var obj = resultsArray[i];
+				if(obj!=undefined){
+					var resObj = {
+							recipientAddress:obj.recipientAddress,
+							title : obj.data.title,
+							groupName: obj.data.groupName
+					};
+					emailArray.push(resObj);
+				}
 			}
-			listEmail.substring(1, listEmail.length-1);*/
-			listEmail = JSON.stringify(resultsArray);
+
+			listEmail = JSON.stringify(emailArray);
 		}
 		msg = msg ? msg : '';
 		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
