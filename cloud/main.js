@@ -1044,7 +1044,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		}*/
 		listEmail = JSON.stringify(resultsArray);
 		msg = msg ? msg : '';
-		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail + ' ,listEmailTotal' + resultsArray.length;
+		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
 
 		success( msg );
 		success( '****************************************************************************************' );
