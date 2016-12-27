@@ -374,7 +374,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			label = label ? label + ': ' : ''; //if missing then do not add a string
 			prop = prop ? prop : ''; //if missing do not add anything
 			style = style ? 'style="' + style + ' " ' : 'style="padding-bottom: 0.375em"'; //inline styling
-			prop = unescape(prop).replace(/\</,'\\<').replace(/\/>/,'\\/\\>').replace(/\>/,'\\>');
+			prop = unescape(prop).replace(/\</,'< ');//.replace(/\/>/,'\\/\\>').replace(/\>/,'\\>');
 
 			html += '<div ' + style + '>' + '<i>' + label + '</i>' + prop + '</div>';
 		} //eo add (to html)
@@ -867,6 +867,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
+
 				},
 				url: 'https://mandrillapp.com/api/1.0/messages/send-template.json',
 				body: body, //this is where the specific emails are generated
@@ -1045,7 +1046,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 			}
 
-			listEmail = JSON.stringify(emailArray);
+			listEmail = JSON.stringify(resObj);
 			success("List Email:" + listEmail);
 		}
 
@@ -1106,7 +1107,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			.then( emailCreate, error ) //then returns a promise, chain it to the next step
 			.then( getOrganizations, error ) //now get the names of the organizations
 			.then( sendEmails, error ) //send out emails per organizations
-			.then( postprocess, error ) //final clean up
+			//.then( postprocess, error ) //final clean up
 			.then( done ); //eo end cloud run, timestamp
 	}; //eo batchSender
 	/*
