@@ -1029,7 +1029,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		var emailArray= [];
 		//console.log(resultsArray);
 		//console.log(resultsArray.length);
-
+		success('done');
 		if(resultsArray){
 			success('==========');
 			success(resultsArray[0]);
