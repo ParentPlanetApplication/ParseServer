@@ -286,16 +286,16 @@ function startPingJob( app, queueName, redisUrl ) {
 
 	Queue.process( jobName, function ( job, done ) {
 		console.log( '\nProcessing job with id %s at %s', job.id, new Date() );
-		Parse.Cloud.run( 'hello', {}, {
+		Parse.Cloud.run( 'emailSender', {}, {
 			success: function ( secretString ) {
 				// obtained secret string
 				var json_str ='';
 				var returnObjec = {} ;
 				console.log("secretString:" + secretString);
-				/*if(secretString!=undefined){
-					json_str  = secretString.result.match(/(listEmail\=.*)/)[0].replace(/(listEmail\=)/, '').replace(/\"$/, '');
+				if(secretString){
+					json_str  = secretString.match(/(listEmail\=.*)/)[0].replace(/(listEmail\=)/, '').replace(/\"$/, '');
 					returnObjec = JSON.parse(json_str);
-				}*/
+				}
 				//var message = secretString.result.replace(/\,listEmail.*/, '')
 				done( null, {
 					status: 'Status:successfully',
