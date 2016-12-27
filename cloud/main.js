@@ -201,7 +201,7 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 		}; //eo suffix
 		gray();
 		prefix();
-		add( [ d.senderName, 'from', d.organizationName, 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
+		add( [ d.senderName, 'from', unescape(d.organizationName), 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
     add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
 		add( [ 'Password:', d.password ], true );
@@ -1050,7 +1050,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			//success("List Email:" + listEmail);
 		}
 
-		listEmail = JSON.stringify(resultsArray);
+
 		msg = msg ? msg : '';
 		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
 
