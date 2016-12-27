@@ -1027,13 +1027,13 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		total = parseInt( total );
 		var listEmail = '';
 		var emailArray= [];
-		console.log(resultsArray);
-		console.log(resultsArray.length);
+		//console.log(resultsArray);
+		//console.log(resultsArray.length);
 
 		if(resultsArray){
-			console.log('==========');
-			console.log(resultsArray[0]);
-			console.log('==========');
+			success('==========');
+			success(resultsArray[0]);
+			success('==========');
 			for (var i = 0; i < resultsArray.length; i++) {
 				var obj = resultsArray[i];
 				if(obj!=undefined){
@@ -1047,7 +1047,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			}
 
 			listEmail = JSON.stringify(resObj);
-			success("List Email:" + listEmail);
+			//success("List Email:" + listEmail);
 		}
 
 		listEmail = JSON.stringify(resultsArray);
