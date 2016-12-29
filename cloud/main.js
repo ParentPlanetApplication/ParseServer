@@ -1033,8 +1033,22 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		if(resultsArray){
 			success('==========');
 			success(resultsArray[0]);
+			success(resultsArray.length);
 			success('==========');
-			for (var i = 0; i < resultsArray.length; i++) {
+			for ( i = 0; i < recipient[ section ].length; i++ ) {
+				var d = recipient[ section ][ i ];
+				success(d);
+				var resObj = {
+						//recipientAddress:d.recipientAddress,
+						title : d.title,
+						groupName: d.groupName
+				};
+				emailArray.push(resObj);
+				//console.log('77'+JSON.stringify(recipient[section][i]));
+			}
+			/*for (var i = 0; i < resultsArray.length; i++) {
+				console.log(i);
+				console.log(resultsArray[i]);
 				var obj = resultsArray[i];
 				if(obj!=undefined){
 					var resObj = {
@@ -1044,10 +1058,10 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					};
 					emailArray.push(resObj);
 				}
-			}
+			}*/
 
 			listEmail = JSON.stringify(resObj);
-			//success("List Email:" + listEmail);
+			success("List Email:" + listEmail);
 		}
 
 
@@ -1058,6 +1072,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );
 		success( ' ' );
+		console.log('total');
+		console.log(total);
+		console.log(skip);
 		status.success( msg );
 		if ( total > skip ) {
 			success( '------------ skip<=total another batchSender() call' );

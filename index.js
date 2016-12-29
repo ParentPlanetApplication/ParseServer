@@ -199,6 +199,17 @@ function setRoutes( app, api, config ) {
 	app.get( '/test', function ( req, res ) {
 		res.sendFile( path.join( __dirname, '/public/test.html' ) );
 	} );
+
+	app.get('/email', function(req, res) {
+		Parse.Cloud.run( 'emailSender', {}, {
+			success: function ( secretString ) {
+				console.log(secretString);
+			},
+			error: function ( error ) {
+				console.log(error);
+			}
+		} );		
+	});
 }
 
 function googleAnalytics( app ) {
