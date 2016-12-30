@@ -70,8 +70,11 @@ p.then( config => {
 	} );
 
 function buildApiServer( config, serverURL, staging ) {
+	databaseURI = config.data.env.DATABASEURI[ mode ].staging;
 	databaseURI = config.data.env.DATABASEURI[ 'aws' ].staging;
 	var appId = config.data.env.APP_ID[ mode ].staging;
+  console.log(appId);
+  console.log(databaseURI);
 
 	var api = new ParseServer( {
 		databaseURI: databaseURI,
@@ -208,7 +211,7 @@ function setRoutes( app, api, config ) {
 			error: function ( error ) {
 				console.log(error);
 			}
-		} );		
+		} );
 	});
 }
 
