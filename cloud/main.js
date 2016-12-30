@@ -55,7 +55,7 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		if ( mode === 1 ) {
 			add( [ d.senderName, 'has just added you to their Parent Planet account. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
 		} else {
-			add( [ d.senderName, 'from', d.organizationName, 'has just added', d.who, 'to', d.groupName, '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
+			add( [ d.senderName, 'from', unescape(d.organizationName), 'has just added', d.who, 'to',unescape(d.groupName), '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
 		}
 		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
@@ -1035,7 +1035,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			success(resultsArray[0]);
 			success(resultsArray.length);
 			success('==========');
-			for ( section in recipient ) {
+			success(recipient);
+			/*for ( section in recipient ) {
 				if ( section === 'attr' ) {
 					continue;
 				}
@@ -1051,25 +1052,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 			}
 
-			/*for (var i = 0; i < resultsArray.length; i++) {
-				console.log(i);
-				console.log(resultsArray[i]);
-				var obj = resultsArray[i];
-				if(obj!=undefined){
-					var resObj = {
-							recipientAddress:obj.recipientAddress,
-							title : obj.data.title,
-							groupName: obj.data.groupName
-					};
-					emailArray.push(resObj);
-				}
-			}*/
 
-			listEmail = JSON.stringify(resObj);
-			success("List Email:" + listEmail);
+			listEmail = JSON.stringify(resultsArray);
+			success("List Email:" + listEmail);*/
 		}
 
-
+    listEmail = JSON.stringify(resultsArray);
 		msg = msg ? msg : '';
 		msg = msg + ' #742 Done() sending emails on:' + date + ' total=' + total + ' ,listEmail=' + listEmail;
 
@@ -1129,7 +1117,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			.then( emailCreate, error ) //then returns a promise, chain it to the next step
 			.then( getOrganizations, error ) //now get the names of the organizations
 			.then( sendEmails, error ) //send out emails per organizations
-			//.then( postprocess, error ) //final clean up
+			.then( postprocess, error ) //final clean up
 			.then( done ); //eo end cloud run, timestamp
 	}; //eo batchSender
 	/*
