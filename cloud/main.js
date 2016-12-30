@@ -5,6 +5,27 @@ var moment = require( "./moment/moment-timezone-with-data.js" );
 Parse.Cloud.define( "hello", function ( request, response ) {
 	response.success( "Hello world!" );
 } );
+
+Parse.Cloud.define( 'notification', function(request, response) {
+  console.log(JSON.stringify(request.params));
+  console.log(response);
+  var queryIOS = new Parse.Query(Parse.Installation);
+  queryIOS.containedIn('userId', request.params.where);
+
+  Parse.Push.send(
+    {
+      where: queryIOS,
+      push_time: request.params.push_time,
+      data: request.params.data
+    },
+    {
+      useMasterKey: true,
+      success: response.success,
+      error: response.error
+    }
+  );
+});
+
 //send out email to new user
 Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 	var name = request.params.username;
@@ -68,9 +89,9 @@ Parse.Cloud.define( 'welcomeSender', function ( request, status ) {
 		return html;
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
-		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color: white;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color:white;">Play Store</a>.'
-		+'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
-		+'</div>';
+		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color: white;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color:white;">Play Store</a>.' +
+			'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>' +
+			'</div>';
 
 		// success('123:' + index + organization + batch + id);
 		var o = null;
@@ -201,8 +222,8 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 		}; //eo suffix
 		gray();
 		prefix();
-		add( [ d.senderName, 'from', unescape(d.organizationName), 'has just added', d.who, 'to', unescape(d.groupName), '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
-    add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
+		add( [ d.senderName, 'from', unescape( d.organizationName ), 'has just added', d.who, 'to', unescape( d.groupName ), '. They are using Parent Planet for their scheduling and communications to help get you the information you need in an easier and more integrated way.<br/>' ] );
+		add( [ 'Parent Planet is an amazing app for parents that can be downloaded from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" >Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Google Play Store</a> directly onto your phone and/or tablet. The app is a great way to view all the information that relates to your children and easily integrate it as you want into your existing calendar. The app can remind you of important events and display all your families activities in an easy to use, color-coded format that is always synchronized for all the caretakers in your family. You can also access all the information on the web at <a href="http://parentplanet.com">parentplanet.com</a>. To use any of these methods simply login into the app and/or website using the following login information.<br/>' ] );
 		add( [ 'Login:', d.username ], true );
 		add( [ 'Password:', d.password ], true );
 		add( [ 'We recommend you update your password by clicking on the Reset Password button on the login screen of the app or website.<br/>' ] );
@@ -213,9 +234,9 @@ Parse.Cloud.define( 'welcomeSender2', function ( request, status ) { //slight ch
 		return html;
 	} //eo getHtml
 	function getBody() { //todo: this is a critical function that generates an email 'body' based on the index
-		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.'
-		+'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>'
-		+'</div>';
+		var footer = '<div style="font-size:0.8em; padding:20px 2em 20px 2em;">Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8">App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp">Play Store</a>.' +
+			'<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>' +
+			'</div>';
 		// success('123:' + index + organization + batch + id);
 		var o = null;
 		var merge_vars = [];
@@ -308,14 +329,14 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	var bigPromise = null; //the very, very, outer promise that holds the cloud function going until the final done is called!
 	var resultsArray = null; //this top-level array holds the results of searching for emails and then using query.each to populate the array;
 	// var Email = Parse.Object.extend( "Email" );
-  var Email = Parse.Object.extend( "Email", {}, {
-    query: function () {
-      return new Parse.Query( this.className );
-    }
-  } );
+	var Email = Parse.Object.extend( "Email", {}, {
+		query: function () {
+			return new Parse.Query( this.className );
+		}
+	} );
 
 	// var query = new Parse.Query( Email ); //query for all the outgoing emails
-  var query = Email.query();
+	var query = Email.query();
 	var skip = 0; //offset for search results
 	var MAXCOUNT = 101; //for handling Parse limits on how many query results to return (100 default)
 	var total = 0; //keep track of how many emails to potentially handle
@@ -323,8 +344,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 	var recipients = {}; //this was the organizations object, keyed by organization id, now holds 'batches' of recipients
 	var groups = {}; //holds OrganizationGroup objects with id and name keyed by id
 	//var customheading = "Update from ParentPlanet"; //string to use for heading at top of email see line#286; TODO: refactor to use org. name instead of P2
-		var footer = 'Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color:#fff;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color: #fff;">Play Store</a>.';
-		footer += '<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>';
+	var footer = 'Would you prefer to receive all this information on your mobile device? The Parent Planet App is now available and offers push notifications, time saving integrations with your existing calendar, and much more. Download it today from the <a href="https://itunes.apple.com/us/app/parent-planet/id1026555193?ls=1&mt=8" style="color:#fff;" >App Store</a> or <a href="https://play.google.com/store/apps/details?id=com.ppllc.pp" style="color: #fff;">Play Store</a>.';
+	footer += '<p style="font-size:0.8em;">If you wish to no longer receive these emails you can change your email preference in the user settings of the Parent Planet App or, if you prefer, please email us your request at stopemail@parentplanet.com</p>';
 
 	function noop() {};
 
@@ -374,7 +395,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			label = label ? label + ': ' : ''; //if missing then do not add a string
 			prop = prop ? prop : ''; //if missing do not add anything
 			style = style ? 'style="' + style + ' " ' : 'style="padding-bottom: 0.375em"'; //inline styling
-			prop = unescape(prop).replace(/\</,'< ');//.replace(/\/>/,'\\/\\>').replace(/\>/,'\\>');
+			prop = unescape( prop ).replace( /\</, '< ' ); //.replace(/\/>/,'\\/\\>').replace(/\>/,'\\>');
 
 			html += '<div ' + style + '>' + '<i>' + label + '</i>' + prop + '</div>';
 		} //eo add (to html)
@@ -390,10 +411,10 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			if ( section === "event" ) {
 				add( null, 'Schedule Events', headerStyle );
 			}
-      if ( section === "cancel" ) {
+			if ( section === "cancel" ) {
 				add( null, 'Canceled Events', headerStyle );
 			}
-      if ( section === "update" ) {
+			if ( section === "update" ) {
 				add( null, 'Updated Events', headerStyle );
 			}
 			if ( section === "message" ) {
@@ -449,7 +470,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				prefix( styling );
 				add( null, d.title, titleStyle );
 				var unescapeGroupName = d.groupName;
-				add( 'Created By', unescapeGroupName);
+				add( 'Created By', unescapeGroupName );
 				add( 'When', _when );
 				var unescapeLocation = d.location;
 				add( 'Where', d.location );
@@ -461,7 +482,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				suffix();
 			} //eo event
-       function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+			function cancelEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
 				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
 				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
@@ -476,15 +497,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					styling += 'padding-bottom: 1.5em; ';
 				}
 				prefix( styling );
-           console.log(JSON.stringify(d));
-					 var unescapeTitile = d.title;
+				console.log( JSON.stringify( d ) );
+				var unescapeTitile = d.title;
 				add( null, unescapeTitile, titleStyle );
 				var unescapeGroupName = d.groupName;
 				add( 'Created By', unescapeGroupName );
-        add( 'Cancel By',unescapeGroupName);
+				add( 'Cancel By', unescapeGroupName );
 				add( 'When', _when );
 				var unescapeLocation = d.location;
-				add( 'Where', unescapeLocation);
+				add( 'Where', unescapeLocation );
 				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote )
 				checkData( 'html', d );
@@ -493,7 +514,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 				suffix();
 			} //eo cancelEvent
-      function updateEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
+			function updateEvents() { //{"allDay":true,"end":"Thurs","location":"617 Memak Road","note":"too fun","repeat":"monthly","start":"Wed","title":"Test 1"}
 				//sxm handle deprecated moment constructor method and update _startDay/Time, _endDay/Time to use start/endDate instead of bare start/end
 				var _startDay = d.start ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'ddd MMM Do YYYY' ) : 'TBA';
 				var _startTime = d.end ? moment( d.start ).tz( 'America/Los_Angeles' ).format( 'h:mm a' ) : '';
@@ -508,14 +529,14 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 					styling += 'padding-bottom: 1.5em; ';
 				}
 				prefix( styling );
-        console.log(JSON.stringify(d));
+				console.log( JSON.stringify( d ) );
 				var unescapeTitle = d.title;
 				add( null, unescapeTitle, titleStyle );
-					var unescapeGroupName = d.groupName;
+				var unescapeGroupName = d.groupName;
 				add( 'Created By', unescapeGroupName );
-        add( 'Edit By', unescapeGroupName);
+				add( 'Edit By', unescapeGroupName );
 				add( 'When', _when );
-					var unescapeLocation = d.location;
+				var unescapeLocation = d.location;
 				add( 'Where', unescapeLocation );
 				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote )
@@ -537,7 +558,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				var unescapeTitle = d.title;
 				add( null, unescapeTitle, titleStyle );
 				var unescapeGroupName = d.groupName;
-				add( 'From', unescapeGroupName);
+				add( 'From', unescapeGroupName );
 				add( 'Due', _due );
 				var unescapeNote = d.note;
 				add( 'Notes', unescapeNote );
@@ -549,12 +570,12 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			case 'event':
 				event();
 				break;
-      case 'cancel':
-        cancelEvents();
-        break;
-      case 'update':
-        updateEvents();
-        break;
+			case 'cancel':
+				cancelEvents();
+				break;
+			case 'update':
+				updateEvents();
+				break;
 			case 'message':
 				message();
 				break;
@@ -624,7 +645,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		function emailFound( results ) {
 			var n = 0;
 
-			SortByStartDate(results);
+			SortByStartDate( results );
 
 			results.forEach( function ( o, i ) { // b) loop through the ‘rows’ of the emails
 				// c) for each item we pull/read the organisation id, then
@@ -676,41 +697,41 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				} //eo loop over recipient in batch
 			} ); //eo results.forEach
 			//Order results
-				function SortByStartDate(results){
-						results.sort(function (a, b) {
-								var aType = a.get("type");
-								var bType = b.get("type");
-								var data1 = a.get( "data" );
-								var data2 = b.get( "data" );
-								var dateBegin;
-								if(aType=="homework") {
-									dateBegin = data1.assigned;
-								}else{
-									dateBegin = data1.start;
-								};
-								var dateEnd;
-								if(bType=="homework") {
-									dateEnd = data2.assigned;
-								}else{
-									dateEnd = data2.start;
-								};
+			function SortByStartDate( results ) {
+				results.sort( function ( a, b ) {
+					var aType = a.get( "type" );
+					var bType = b.get( "type" );
+					var data1 = a.get( "data" );
+					var data2 = b.get( "data" );
+					var dateBegin;
+					if ( aType == "homework" ) {
+						dateBegin = data1.assigned;
+					} else {
+						dateBegin = data1.start;
+					};
+					var dateEnd;
+					if ( bType == "homework" ) {
+						dateEnd = data2.assigned;
+					} else {
+						dateEnd = data2.start;
+					};
 
 
 
-								var date1 = new Date(dateBegin);
-								var date2 = new Date(dateEnd);
+					var date1 = new Date( dateBegin );
+					var date2 = new Date( dateEnd );
 
-								if(date1 < date2){
-									return -1;
-								};
-								if(date1 > date2) {
-									return 1
-								};
+					if ( date1 < date2 ) {
+						return -1;
+					};
+					if ( date1 > date2 ) {
+						return 1
+					};
 
 
-								return 0;
-							});
-		 	}
+					return 0;
+				} );
+			}
 
 
 			success( '#467 have resolved emailCreate promise, with total emails:' + n );
@@ -778,7 +799,7 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 			for ( var p in batch ) {
 				var addr = batch[ p ][ "attr" ][ "addr" ];
 				var html = batch[ p ][ "html" ];
-				var unescapeOrgName = unescape(organization.name);
+				var unescapeOrgName = unescape( organization.name );
 				var custom = {
 					"rcpt": addr,
 					"vars": [
@@ -1026,15 +1047,15 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		skip = parseInt( skip );
 		total = parseInt( total );
 		var listEmail = '';
-		var emailArray= [];
+		var emailArray = [];
 		//console.log(resultsArray);
 		//console.log(resultsArray.length);
-		success('done');
-		if(resultsArray){
-			success('==========');
-			success(resultsArray[0]);
-			success(resultsArray.length);
-			success('==========');
+		success( 'done' );
+		if ( resultsArray ) {
+			success( '==========' );
+			success( resultsArray[ 0 ] );
+			success( resultsArray.length );
+			success( '==========' );
 			for ( section in recipient ) {
 				if ( section === 'attr' ) {
 					continue;
@@ -1042,11 +1063,11 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				for ( i = 0; i < recipient[ section ].length; i++ ) {
 					var d = recipient[ section ][ i ];
 					var resObj = {
-							//recipientAddress:d.recipientAddress,
-							title : d.title,
-							groupName: d.groupName
+						//recipientAddress:d.recipientAddress,
+						title: d.title,
+						groupName: d.groupName
 					};
-					emailArray.push(resObj);
+					emailArray.push( resObj );
 					//console.log('77'+JSON.stringify(recipient[section][i]));
 				}
 			}
@@ -1065,8 +1086,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				}
 			}*/
 
-			listEmail = JSON.stringify(resObj);
-			success("List Email:" + listEmail);
+			listEmail = JSON.stringify( resObj );
+			success( "List Email:" + listEmail );
 		}
 
 
@@ -1077,9 +1098,9 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 		success( '****************************************************************************************' );
 		success( '****************************************************************************************' );
 		success( ' ' );
-		console.log('total');
-		console.log(total);
-		console.log(skip);
+		console.log( 'total' );
+		console.log( total );
+		console.log( skip );
 		status.success( msg );
 		if ( total > skip ) {
 			success( '------------ skip<=total another batchSender() call' );
@@ -1158,8 +1179,8 @@ Parse.Cloud.define( "emailSender", function ( request, status ) {
 				batchSender(); //first call to batchSender
 			},
 			error: function ( err, count ) {
-        console.log('---------------------------');
-        console.log(err);
+				console.log( '---------------------------' );
+				console.log( err );
 				success( '#820 --------------- error: ' + err + ' count:' + count + ' initial skip:' + skip ); //log previous steps results
 			}
 		} );
@@ -1474,7 +1495,7 @@ Parse.Cloud.define( "pushToDevice", function ( request, response ) {
 	// 		console.log( 'Error while finding UserParentRelation' + error );
 	// 	}
 	// );
-  //
+	//
 
 	// Send push notification to query
 	Parse.Push.send( {
